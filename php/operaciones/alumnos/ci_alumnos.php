@@ -56,7 +56,7 @@ class ci_alumnos extends gestion_escuela_ci
 	{
 		    try{
                 $this->dep('datos')->sincronizar();
-				ei_arbol($this->dep('datos')->get(), "2. MEMORIA DE LA TABLA");
+				$this->dep('datos')->resetear();
             }catch(toba_error_db $e){
                 /* Error al grabar */
                 if($e->get_sqlstate()=="db_23505"){
@@ -144,8 +144,6 @@ class ci_alumnos extends gestion_escuela_ci
 	 */
 	function evt__formulario__modificacion($datos)
 	{
-		
-		ei_arbol($datos, "1. ESTO MANDA EL FORMULARIO");  
 		$this->dep('datos')->set($datos);
 	}
 

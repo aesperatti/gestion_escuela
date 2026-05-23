@@ -11,4 +11,9 @@
 			$sql="select * from profesores where $where";
 			return toba::db()->consultar($sql);
 		}
+		function get_materias($where='1=1')
+		{
+			$sql="select * from materias where $where";
+			return toba::db()->consultar($sql);
+		}
     }

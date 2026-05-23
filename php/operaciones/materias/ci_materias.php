@@ -1,5 +1,5 @@
 <?php
-class ci_profesores extends gestion_escuela_ci
+class ci_materias extends gestion_escuela_ci
 {
 	protected $s__filtro;
    
@@ -24,7 +24,7 @@ class ci_profesores extends gestion_escuela_ci
 	function conf__pant_edicion(toba_ei_pantalla $pantalla)
 	{
 		    $hay_cambios = $this->dep('datos')->hay_cambios();
-            toba::menu()->set_modo_confirmacion('Esta a punto de abandonar la edición del profesor sin grabar, ¿Desea continuar?', $hay_cambios);
+            toba::menu()->set_modo_confirmacion('Esta a punto de abandonar la edición del materia sin grabar, ¿Desea continuar?', $hay_cambios);
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class ci_profesores extends gestion_escuela_ci
                 /* Error al grabar */
                 if($e->get_sqlstate()=="db_23505"){
                     /* Clave Duplicada */
-                    $mensaje ="Ya existe el profesor que desea agregar";
+                    $mensaje ="Ya existe el materia que desea agregar";
                     toba::notificacion()->agregar($mensaje);
                 }else {
                     $mensaje_usuario='ERROR al guardar. Los cambios NO fueron registrados.';
@@ -87,9 +87,9 @@ class ci_profesores extends gestion_escuela_ci
 	{
 		    if(isset($this->s__filtro)){
                 $where = $this->dep('filtro')->get_sql_where();	
-                $datos = toba::consulta_php('gestion_escuela')->get_profesores($where);
+                $datos = toba::consulta_php('gestion_escuela')->get_materias($where);
             }else{
-                $datos = toba::consulta_php('gestion_escuela')->get_profesores();
+                $datos = toba::consulta_php('gestion_escuela')->get_materias();
             }
             $cuadro->set_datos($datos);   
 	}
@@ -181,4 +181,5 @@ class ci_profesores extends gestion_escuela_ci
 	}
 
 }
+
 ?>
