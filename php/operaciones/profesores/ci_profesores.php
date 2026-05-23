@@ -1,13 +1,15 @@
 <?php
 class ci_profesores extends gestion_escuela_ci
 {
+	protected $s__filtro;
+   
 	//-----------------------------------------------------------------------------------
 	//---- Configuraciones --------------------------------------------------------------
 	//-----------------------------------------------------------------------------------
 
 	/**
-	 * Ventana de extensión para configurar la pantalla. Se ejecuta previo a la configuración de los componentes pertenecientes a la pantalla 
-	 * por lo que es ideal por ejemplo para ocultarlos en base a una condición dinámica, ej. $pant->eliminar_dep("tal") 
+	 * Ventana de extensiï¿½n para configurar la pantalla. Se ejecuta previo a la configuraciï¿½n de los componentes pertenecientes a la pantalla 
+	 * por lo que es ideal por ejemplo para ocultarlos en base a una condiciï¿½n dinï¿½mica, ej. $pant->eliminar_dep("tal") 
 	 * @param toba_ei_pantalla $pantalla
 	 */
 	function conf__pant_inicial(toba_ei_pantalla $pantalla)
@@ -15,12 +17,14 @@ class ci_profesores extends gestion_escuela_ci
 	}
 
 	/**
-	 * Ventana de extensión para configurar la pantalla. Se ejecuta previo a la configuración de los componentes pertenecientes a la pantalla 
-	 * por lo que es ideal por ejemplo para ocultarlos en base a una condición dinámica, ej. $pant->eliminar_dep("tal") 
+	 * Ventana de extensiï¿½n para configurar la pantalla. Se ejecuta previo a la configuraciï¿½n de los componentes pertenecientes a la pantalla 
+	 * por lo que es ideal por ejemplo para ocultarlos en base a una condiciï¿½n dinï¿½mica, ej. $pant->eliminar_dep("tal") 
 	 * @param toba_ei_pantalla $pantalla
 	 */
 	function conf__pant_edicion(toba_ei_pantalla $pantalla)
 	{
+		    $hay_cambios = $this->dep('datos')->hay_cambios();
+            toba::menu()->set_modo_confirmacion('Esta a punto de abandonar la ediciÃ³n del profesor sin grabar, Â¿Desea continuar?', $hay_cambios);
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -28,24 +32,47 @@ class ci_profesores extends gestion_escuela_ci
 	//-----------------------------------------------------------------------------------
 
 	/**
-	 * Atrapa la interacción del usuario a través del botón asociado. El método no recibe parámetros
+	 * Atrapa la interacciï¿½n del usuario a travï¿½s del botï¿½n asociado. El mï¿½todo no recibe parï¿½metros
 	 */
 	function evt__agregar()
 	{
+		$this->set_pantalla('pant_edicion');   
 	}
 
 	/**
-	 * Originalmente este método limpia las variables y definiciones del componente, y en caso de exisitr un CN asociado ejecuta su cancelar. Para mantener este comportamiento llamar a parent::evt__cancelar
+	 * Originalmente este mï¿½todo limpia las variables y definiciones del componente, y en caso de exisitr un CN asociado ejecuta su cancelar. Para mantener este comportamiento llamar a parent::evt__cancelar
 	 */
 	function evt__cancelar()
 	{
+		   	$this->dep('datos')->resetear();
+            unset($this->s__filtro);
+            $this->set_pantalla('pant_inicial');  
 	}
 
 	/**
-	 * Atrapa la interacción del usuario a través del botón asociado. El método no recibe parámetros
+	 * Atrapa la interacciï¿½n del usuario a travï¿½s del botï¿½n asociado. El mï¿½todo no recibe parï¿½metros
 	 */
 	function evt__guardar()
 	{
+		    try{
+                $this->dep('datos')->sincronizar();
+				ei_arbol($this->dep('datos')->get(), "2. MEMORIA DE LA TABLA");
+            }catch(toba_error_db $e){
+                /* Error al grabar */
+                if($e->get_sqlstate()=="db_23505"){
+                    /* Clave Duplicada */
+                    $mensaje ="Ya existe el profesor que desea agregar";
+                    toba::notificacion()->agregar($mensaje);
+                }else {
+                    $mensaje_usuario='ERROR al guardar. Los cambios NO fueron registrados.';
+                    $mensaje='<br><br>InformaciÃ³n Adicional: ';
+                    $mensaje.='<br><strong>Error NÂº </strong>'.$e->get_sqlstate();
+                    $mensaje.='<br><br><strong> Mensaje: </strong>'.$e->get_mensaje_motor();
+                    throw new toba_error($mensaje_usuario,$mensaje);
+                    //toba::notificacion()->agregar($mensaje);
+                }
+            }
+            $this->set_pantalla('pant_inicial');   
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -53,27 +80,48 @@ class ci_profesores extends gestion_escuela_ci
 	//-----------------------------------------------------------------------------------
 
 	/**
-	 * Permite cambiar la configuración del cuadro previo a la generación de la salida
+	 * Permite cambiar la configuraciï¿½n del cuadro previo a la generaciï¿½n de la salida
 	 * El formato de carga es de tipo recordset: array( array('columna' => valor, ...), ...)
 	 */
 	function conf__cuadro(gestion_escuela_ei_cuadro $cuadro)
 	{
+		    if(isset($this->s__filtro)){
+                $where = $this->dep('filtro')->get_sql_where();	
+                $datos = toba::consulta_php('gestion_escuela')->get_profesores($where);
+            }else{
+                $datos = toba::consulta_php('gestion_escuela')->get_profesores();
+            }
+            $cuadro->set_datos($datos);   
 	}
 
 	/**
-	 * Atrapa la interacción del usuario con el botón asociado
+	 * Atrapa la interacciï¿½n del usuario con el botï¿½n asociado
 	 * @param array $seleccion Id. de la fila seleccionada
 	 */
 	function evt__cuadro__seleccion($seleccion)
 	{
+		    $this->dep('datos')->cargar($seleccion);
+            $this->set_pantalla('pant_edicion');  
 	}
 
 	/**
-	 * Atrapa la interacción del usuario con el botón asociado
+	 * Atrapa la interacciï¿½n del usuario con el botï¿½n asociado
 	 * @param array $seleccion Id. de la fila seleccionada
 	 */
 	function evt__cuadro__eliminar($seleccion)
 	{
+		    try{
+                $this->dep('datos')->cargar($seleccion);
+                $this->dep('datos')->eliminar_todo();
+                $this->dep('datos')->sincronizar();
+            }catch (toba_error_db $e) {
+                if($e->get_sqlstate()=="db_23503"){
+                    toba::notificacion()->agregar('ATENCION!! El registro No serÃ¡ eliminado para mantener la integridad de los datos.');
+                }else{
+                    toba::notificacion()->agregar('El registro no puede borrarse: '.$e->get_sqlstate() );
+                }    
+            }
+            $this->dep('datos')->resetear();  
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -81,19 +129,24 @@ class ci_profesores extends gestion_escuela_ci
 	//-----------------------------------------------------------------------------------
 
 	/**
-	 * Permite cambiar la configuración del formulario previo a la generación de la salida
+	 * Permite cambiar la configuraciï¿½n del formulario previo a la generaciï¿½n de la salida
 	 * El formato del carga debe ser array(<campo> => <valor>, ...)
 	 */
 	function conf__formulario(gestion_escuela_ei_formulario $form)
 	{
+		$form->set_datos($this->dep('datos')->get());	           
+	
 	}
 
 	/**
-	 * Atrapa la interacción del usuario con el botón asociado
-	 * @param array $datos Estado del componente al momento de ejecutar el evento. El formato es el mismo que en la carga de la configuración
+	 * Atrapa la interacciï¿½n del usuario con el botï¿½n asociado
+	 * @param array $datos Estado del componente al momento de ejecutar el evento. El formato es el mismo que en la carga de la configuraciï¿½n
 	 */
 	function evt__formulario__modificacion($datos)
 	{
+		
+		ei_arbol($datos, "1. ESTO MANDA EL FORMULARIO");  
+		$this->dep('datos')->set($datos);
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -101,26 +154,31 @@ class ci_profesores extends gestion_escuela_ci
 	//-----------------------------------------------------------------------------------
 
 	/**
-	 * Permite cambiar la configuración del formulario previo a la generación de la salida
+	 * Permite cambiar la configuraciï¿½n del formulario previo a la generaciï¿½n de la salida
 	 * El formato del carga debe ser array(<campo> => <valor>, ...)
 	 */
 	function conf__filtro(gestion_escuela_ei_filtro $filtro)
 	{
+		    if (isset($this->s__filtro)) {
+                $filtro->set_datos($this->s__filtro);
+            }  
 	}
 
 	/**
-	 * Atrapa la interacción del usuario con el botón asociado
-	 * @param array $datos Estado del componente al momento de ejecutar el evento. El formato es el mismo que en la carga de la configuración
+	 * Atrapa la interacciï¿½n del usuario con el botï¿½n asociado
+	 * @param array $datos Estado del componente al momento de ejecutar el evento. El formato es el mismo que en la carga de la configuraciï¿½n
 	 */
 	function evt__filtro__filtrar($datos)
 	{
+		$this->s__filtro = $datos;  
 	}
 
 	/**
-	 * Atrapa la interacción del usuario con el botón asociado
+	 * Atrapa la interacciï¿½n del usuario con el botï¿½n asociado
 	 */
 	function evt__filtro__cancelar()
 	{
+		unset($this->s__filtro);     
 	}
 
 }
