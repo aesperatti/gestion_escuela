@@ -11,6 +11,11 @@
 			$sql="select * from profesores where $where";
 			return toba::db()->consultar($sql);
 		}
+		function get_nombresprofesores($where='1=1')
+		{
+			$sql="select id, apellido || ', ' || nombre as nombre_completo from profesores where $where";
+			return toba::db()->consultar($sql);
+		}
 		function get_materias($where='1=1')
 		{
 			$sql="select * from materias where $where";
@@ -20,7 +25,7 @@
 		{
 			$sql="select me.id,
 				ma.nombre as descmateria,
-				pro.apellido as descprofesor,			 
+				pro.apellido || ', ' || pro.nombre as descprofesor,			 
 				me.fecha, me.hora, me.aula, me.cupo 
 				from mesas_examen me
 				join materias ma

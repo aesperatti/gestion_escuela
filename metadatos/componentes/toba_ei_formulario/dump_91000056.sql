@@ -235,7 +235,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	NULL, --estado_defecto
 	'0', --solo_lectura
 	'0', --solo_lectura_modificacion
-	'get_profesores', --carga_metodo
+	'get_nombresprofesores', --carga_metodo
 	NULL, --carga_clase
 	NULL, --carga_include
 	NULL, --carga_dt
@@ -244,7 +244,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'gestion_escuela', --carga_fuente
 	NULL, --carga_lista
 	'id', --carga_col_clave
-	'apellido', --carga_col_desc
+	'nombre_completo', --carga_col_desc
 	NULL, --carga_maestros
 	'0', --carga_cascada_relaj
 	'1', --cascada_mantiene_estado
