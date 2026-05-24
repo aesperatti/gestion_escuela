@@ -35,4 +35,12 @@
 				where $where";
 			return toba::db()->consultar($sql);
 		}
+
+		function get_carrera($where='1=1')
+		{
+			$sql="select * from carrera where $where";
+			return toba::db()->consultar($sql);
+		}
+
+
     }
