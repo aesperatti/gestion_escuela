@@ -47,6 +47,14 @@
 			$sql="select * from carrera where $where";
 			return toba::db()->consultar($sql);
 		}
-
+		function get_inscripciones($where='1=1')
+		{
+			$sql="select insc.id_inscripcion, alu.apellido || ', ' || alu.nombre as nombre_completo, insc.id_mesa, insc.fecha_inscripcion, ei.descripcion as estado, ca.descripcion as desccarrera 
+			from inscripciones insc 
+			join estados_inscripcion ei on ei.id = insc.id_estado 
+			join alumnos alu on insc.id_alumno=alu.id 
+			join carrera ca on alu.id_carrera=ca.id where $where";
+			return toba::db()->consultar($sql);
+		}
 
     }

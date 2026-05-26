@@ -1,5 +1,5 @@
 ------------------------------------------------------------
---[4000017]--  ABM Inscripcion 
+--[4000017]--  Consulta inscripciones 
 ------------------------------------------------------------
 
 ------------------------------------------------------------
@@ -23,7 +23,7 @@ INSERT INTO apex_item (item_id, proyecto, item, padre_id, padre_proyecto, padre,
 	NULL, --actividad_buffer
 	NULL, --actividad_patron_proyecto
 	NULL, --actividad_patron
-	'ABM Inscripcion', --nombre
+	'Consulta inscripciones', --nombre
 	NULL, --descripcion
 	'4000002', --punto_montaje
 	NULL, --actividad_accion
@@ -52,3 +52,15 @@ INSERT INTO apex_item (item_id, proyecto, item, padre_id, padre_proyecto, padre,
 	'0'  --retrasar_headers
 );
 --- FIN Grupo de desarrollo 4
+
+------------------------------------------------------------
+-- apex_item_objeto
+------------------------------------------------------------
+INSERT INTO apex_item_objeto (item_id, proyecto, item, objeto, orden, inicializar) VALUES (
+	NULL, --item_id
+	'gestion_escuela', --proyecto
+	'4000017', --item
+	'91000058', --objeto
+	'0', --orden
+	NULL  --inicializar
+);
