@@ -3,7 +3,13 @@
 	{
         function get_alumnos($where='1=1')
 		{
-			$sql="select * from alumnos where $where";
+			$sql="select alu.id, alu.legajo, alu.nombre, 
+							alu.apellido, alu.dni, alu.email, 
+							ca.descripcion as desccarrera
+			 from alumnos alu
+			 join carrera ca 
+			 on alu.id_carrera = ca.id
+			where $where";
 			return toba::db()->consultar($sql);
 		}
         function get_profesores($where='1=1')

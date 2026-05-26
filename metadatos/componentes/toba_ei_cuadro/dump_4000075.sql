@@ -322,7 +322,7 @@ INSERT INTO apex_objeto_ei_cuadro_columna (objeto_cuadro_proyecto, objeto_cuadro
 	'gestion_escuela', --objeto_cuadro_proyecto
 	'4000075', --objeto_cuadro
 	'4000056', --objeto_cuadro_col
-	'carrera', --clave
+	'desccarrera', --clave
 	'6', --orden
 	'Carrera', --titulo
 	'ei-cuadro-col-tit', --estilo_titulo

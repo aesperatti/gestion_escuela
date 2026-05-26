@@ -88,10 +88,11 @@ class ci_alumnos extends gestion_escuela_ci
 		    if(isset($this->s__filtro)){
                 $where = $this->dep('filtro')->get_sql_where();	
                 $datos = toba::consulta_php('gestion_escuela')->get_alumnos($where);
+				$cuadro->set_datos($datos); 
             }else{
                 $datos = toba::consulta_php('gestion_escuela')->get_alumnos();
             }
-            $cuadro->set_datos($datos);   
+              
 	}
 
 	/**
