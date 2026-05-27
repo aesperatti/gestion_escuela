@@ -25,6 +25,7 @@ class ci_mesasexamen extends gestion_escuela_ci
 	{
 		    $hay_cambios = $this->dep('datos')->hay_cambios();
             toba::menu()->set_modo_confirmacion('Esta a punto de abandonar la edición del mesa sin grabar, ¿Desea continuar?', $hay_cambios);
+
 	}
 
 	//-----------------------------------------------------------------------------------

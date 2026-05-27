@@ -80,7 +80,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'1', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'mesas_examen'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -94,7 +94,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'mesas_examen'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -108,7 +108,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'mesas_examen'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -122,7 +122,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'mesas_examen'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -136,21 +136,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
-	'mesas_examen'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000052', --objeto
-	'4000027', --col_id
-	'aula', --columna
-	'C', --tipo
-	'0', --pk
-	NULL, --secuencia
-	'20', --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'mesas_examen'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -164,7 +150,24 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'mesas_examen'  --tabla
 );
 --- FIN Grupo de desarrollo 4
+
+--- INICIO Grupo de desarrollo 91
+INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
+	'gestion_escuela', --objeto_proyecto
+	'4000052', --objeto
+	'91000052', --col_id
+	'id_aula', --columna
+	'E', --tipo
+	'0', --pk
+	NULL, --secuencia
+	NULL, --largo
+	NULL, --no_nulo
+	'0', --no_nulo_db
+	'0', --externa
+	'mesas_examen'  --tabla
+);
+--- FIN Grupo de desarrollo 91

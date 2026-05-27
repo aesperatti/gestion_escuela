@@ -1,15 +1,15 @@
 ------------------------------------------------------------
---[4000049]--  DT - alumnos 
+--[91000075]--  DT - aulas 
 ------------------------------------------------------------
 
 ------------------------------------------------------------
 -- apex_objeto
 ------------------------------------------------------------
 
---- INICIO Grupo de desarrollo 4
+--- INICIO Grupo de desarrollo 91
 INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, clase_proyecto, clase, punto_montaje, subclase, subclase_archivo, objeto_categoria_proyecto, objeto_categoria, nombre, titulo, colapsable, descripcion, fuente_datos_proyecto, fuente_datos, solicitud_registrar, solicitud_obj_obs_tipo, solicitud_obj_observacion, parametro_a, parametro_b, parametro_c, parametro_d, parametro_e, parametro_f, usuario, creacion, posicion_botonera) VALUES (
 	'gestion_escuela', --proyecto
-	'4000049', --objeto
+	'91000075', --objeto
 	NULL, --anterior
 	NULL, --identificador
 	NULL, --reflexivo
@@ -20,7 +20,7 @@ INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, c
 	NULL, --subclase_archivo
 	NULL, --objeto_categoria_proyecto
 	NULL, --objeto_categoria
-	'DT - alumnos', --nombre
+	'DT - aulas', --nombre
 	NULL, --titulo
 	NULL, --colapsable
 	NULL, --descripcion
@@ -36,24 +36,24 @@ INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, c
 	NULL, --parametro_e
 	NULL, --parametro_f
 	NULL, --usuario
-	'2026-05-22 17:11:15', --creacion
+	'2026-05-26 22:49:29', --creacion
 	NULL  --posicion_botonera
 );
---- FIN Grupo de desarrollo 4
+--- FIN Grupo de desarrollo 91
 
 ------------------------------------------------------------
 -- apex_objeto_db_registros
 ------------------------------------------------------------
 INSERT INTO apex_objeto_db_registros (objeto_proyecto, objeto, max_registros, min_registros, punto_montaje, ap, ap_clase, ap_archivo, tabla, tabla_ext, alias, modificar_claves, fuente_datos_proyecto, fuente_datos, permite_actualizacion_automatica, esquema, esquema_ext) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
+	'91000075', --objeto
 	NULL, --max_registros
 	NULL, --min_registros
 	'4000002', --punto_montaje
 	'1', --ap
 	NULL, --ap_clase
 	NULL, --ap_archivo
-	'alumnos', --tabla
+	'aulas', --tabla
 	NULL, --tabla_ext
 	NULL, --alias
 	'0', --modificar_claves
@@ -68,103 +68,33 @@ INSERT INTO apex_objeto_db_registros (objeto_proyecto, objeto, max_registros, mi
 -- apex_objeto_db_registros_col
 ------------------------------------------------------------
 
---- INICIO Grupo de desarrollo 4
+--- INICIO Grupo de desarrollo 91
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000006', --col_id
+	'91000075', --objeto
+	'91000050', --col_id
 	'id', --columna
 	'E', --tipo
 	'1', --pk
-	'alumnos_id_seq', --secuencia
+	'aulas_id_seq', --secuencia
 	NULL, --largo
 	NULL, --no_nulo
 	'1', --no_nulo_db
 	'0', --externa
-	'alumnos'  --tabla
+	'aulas'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000007', --col_id
-	'legajo', --columna
-	'E', --tipo
-	'0', --pk
-	NULL, --secuencia
-	NULL, --largo
-	NULL, --no_nulo
-	'1', --no_nulo_db
-	'0', --externa
-	'alumnos'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000008', --col_id
-	'nombre', --columna
+	'91000075', --objeto
+	'91000051', --col_id
+	'descripcion', --columna
 	'C', --tipo
 	'0', --pk
 	NULL, --secuencia
 	'50', --largo
 	NULL, --no_nulo
-	'0', --no_nulo_db
+	'1', --no_nulo_db
 	'0', --externa
-	'alumnos'  --tabla
+	'aulas'  --tabla
 );
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000009', --col_id
-	'apellido', --columna
-	'C', --tipo
-	'0', --pk
-	NULL, --secuencia
-	'50', --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'alumnos'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000010', --col_id
-	'dni', --columna
-	'C', --tipo
-	'0', --pk
-	NULL, --secuencia
-	'20', --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'alumnos'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000011', --col_id
-	'email', --columna
-	'C', --tipo
-	'0', --pk
-	NULL, --secuencia
-	'100', --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'alumnos'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000049', --objeto
-	'4000012', --col_id
-	'id_carrera', --columna
-	'C', --tipo
-	'0', --pk
-	NULL, --secuencia
-	'100', --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'alumnos'  --tabla
-);
---- FIN Grupo de desarrollo 4
+--- FIN Grupo de desarrollo 91

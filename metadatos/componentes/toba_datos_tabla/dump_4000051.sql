@@ -80,7 +80,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'1', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'materias'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -94,7 +94,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'10', --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'materias'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -108,7 +108,7 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'100', --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'materias'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
@@ -122,7 +122,38 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'materias'  --tabla
 );
 --- FIN Grupo de desarrollo 4
+
+--- INICIO Grupo de desarrollo 91
+INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
+	'gestion_escuela', --objeto_proyecto
+	'4000051', --objeto
+	'91000048', --col_id
+	'id_carrera', --columna
+	'E', --tipo
+	'0', --pk
+	NULL, --secuencia
+	NULL, --largo
+	NULL, --no_nulo
+	'0', --no_nulo_db
+	'0', --externa
+	'materias'  --tabla
+);
+INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
+	'gestion_escuela', --objeto_proyecto
+	'4000051', --objeto
+	'91000049', --col_id
+	'id_profesor', --columna
+	'E', --tipo
+	'0', --pk
+	NULL, --secuencia
+	NULL, --largo
+	NULL, --no_nulo
+	'0', --no_nulo_db
+	'0', --externa
+	'materias'  --tabla
+);
+--- FIN Grupo de desarrollo 91

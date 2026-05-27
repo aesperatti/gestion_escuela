@@ -87,9 +87,9 @@ class ci_materias extends gestion_escuela_ci
 	{
 		    if(isset($this->s__filtro)){
                 $where = $this->dep('filtro')->get_sql_where();	
-                $datos = toba::consulta_php('gestion_escuela')->get_materias($where);
+                $datos = toba::consulta_php('gestion_escuela')->get_materiasconcarrera($where);
             }else{
-                $datos = toba::consulta_php('gestion_escuela')->get_materias();
+                $datos = toba::consulta_php('gestion_escuela')->get_materiasconcarrera();
             }
             $cuadro->set_datos($datos);   
 	}

@@ -98,8 +98,9 @@ class ci_alumnos extends gestion_escuela_ci
 	 */
 	function evt__cuadro__seleccion($seleccion)
 	{
-		    $this->dep('datos')->cargar($seleccion);
-            $this->set_pantalla('pant_edicion');  
+		    
+		$this->dep('datos')->cargar($seleccion);
+        $this->set_pantalla('pant_edicion');  
 	}
 
 	/**

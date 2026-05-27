@@ -1,15 +1,15 @@
 ------------------------------------------------------------
---[4000050]--  DT - inscripciones 
+--[91000065]--  DT - inscripciones 
 ------------------------------------------------------------
 
 ------------------------------------------------------------
 -- apex_objeto
 ------------------------------------------------------------
 
---- INICIO Grupo de desarrollo 4
+--- INICIO Grupo de desarrollo 91
 INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, clase_proyecto, clase, punto_montaje, subclase, subclase_archivo, objeto_categoria_proyecto, objeto_categoria, nombre, titulo, colapsable, descripcion, fuente_datos_proyecto, fuente_datos, solicitud_registrar, solicitud_obj_obs_tipo, solicitud_obj_observacion, parametro_a, parametro_b, parametro_c, parametro_d, parametro_e, parametro_f, usuario, creacion, posicion_botonera) VALUES (
 	'gestion_escuela', --proyecto
-	'4000050', --objeto
+	'91000065', --objeto
 	NULL, --anterior
 	NULL, --identificador
 	NULL, --reflexivo
@@ -36,17 +36,17 @@ INSERT INTO apex_objeto (proyecto, objeto, anterior, identificador, reflexivo, c
 	NULL, --parametro_e
 	NULL, --parametro_f
 	NULL, --usuario
-	'2026-05-22 17:12:31', --creacion
+	'2026-05-26 14:34:14', --creacion
 	NULL  --posicion_botonera
 );
---- FIN Grupo de desarrollo 4
+--- FIN Grupo de desarrollo 91
 
 ------------------------------------------------------------
 -- apex_objeto_db_registros
 ------------------------------------------------------------
 INSERT INTO apex_objeto_db_registros (objeto_proyecto, objeto, max_registros, min_registros, punto_montaje, ap, ap_clase, ap_archivo, tabla, tabla_ext, alias, modificar_claves, fuente_datos_proyecto, fuente_datos, permite_actualizacion_automatica, esquema, esquema_ext) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000050', --objeto
+	'91000065', --objeto
 	NULL, --max_registros
 	NULL, --min_registros
 	'4000002', --punto_montaje
@@ -68,11 +68,11 @@ INSERT INTO apex_objeto_db_registros (objeto_proyecto, objeto, max_registros, mi
 -- apex_objeto_db_registros_col
 ------------------------------------------------------------
 
---- INICIO Grupo de desarrollo 4
+--- INICIO Grupo de desarrollo 91
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000050', --objeto
-	'4000013', --col_id
+	'91000065', --objeto
+	'91000043', --col_id
 	'id_inscripcion', --columna
 	'E', --tipo
 	'1', --pk
@@ -80,13 +80,13 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'1', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'inscripciones'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000050', --objeto
-	'4000014', --col_id
+	'91000065', --objeto
+	'91000044', --col_id
 	'id_alumno', --columna
 	'E', --tipo
 	'0', --pk
@@ -94,13 +94,13 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'inscripciones'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000050', --objeto
-	'4000015', --col_id
+	'91000065', --objeto
+	'91000045', --col_id
 	'id_mesa', --columna
 	'E', --tipo
 	'0', --pk
@@ -108,13 +108,13 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'inscripciones'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000050', --objeto
-	'4000016', --col_id
+	'91000065', --objeto
+	'91000046', --col_id
 	'fecha_inscripcion', --columna
 	'F', --tipo
 	'0', --pk
@@ -122,21 +122,21 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'inscripciones'  --tabla
 );
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
-	'4000050', --objeto
-	'4000017', --col_id
-	'estado', --columna
-	'C', --tipo
+	'91000065', --objeto
+	'91000047', --col_id
+	'id_estado', --columna
+	'E', --tipo
 	'0', --pk
 	NULL, --secuencia
-	'20', --largo
+	NULL, --largo
 	NULL, --no_nulo
 	'0', --no_nulo_db
-	NULL, --externa
+	'0', --externa
 	'inscripciones'  --tabla
 );
---- FIN Grupo de desarrollo 4
+--- FIN Grupo de desarrollo 91

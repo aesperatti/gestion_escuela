@@ -540,9 +540,9 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'4000052', --objeto_ei_formulario_fila
 	'4000076', --objeto_ei_formulario
 	'gestion_escuela', --objeto_ei_formulario_proyecto
-	'carrera', --identificador
+	'id_carrera', --identificador
 	'ef_combo', --elemento_formulario
-	'carrera', --columnas
+	'id_carrera', --columnas
 	'0', --obligatorio
 	'0', --oculto_relaja_obligatorio
 	'6', --orden
