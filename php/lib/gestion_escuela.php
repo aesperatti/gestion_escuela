@@ -5,7 +5,8 @@
 		{
 			$sql="select alu.id, alu.legajo, alu.nombre, 
 							alu.apellido, alu.dni, alu.email, 
-							ca.descripcion as desccarrera
+							ca.descripcion as desccarrera,
+							alu.id_carrera
 			 from alumnos alu
 			 join carrera ca 
 			 on alu.id_carrera = ca.id
@@ -27,6 +28,13 @@
 			$sql="select * from materias where $where";
 			return toba::db()->consultar($sql);
 		}
+
+		function get_materias_fecha($id_materia)
+		{
+			$sql="select fecha_mesa from materias where id='$id_materia'";
+			return toba::db()->consultar($sql);
+		}
+
 		function get_materiasconcarrera($where='1=1')
 		{
 			$sql="select ma.id, ma.codigo, ma.nombre, ma.anio, pro.apellido || ', ' || pro.nombre as descprofesor, ca.descripcion desccarrera 
@@ -45,7 +53,8 @@
 		}
 		function get_mesasparacombo($where='1=1')
 		{
-			$sql="select me.id, ma.nombre || ', ' || pro.apellido || ' ' || pro.nombre || ', ' || me.fecha || ', ' || me.hora as opcion from mesas_examen me 	join materias ma on ma.id = me.id_materia join profesores pro on pro.id = me.id_profesor where $where";
+			$sql="select me.id, ma.nombre || ', ' || pro.apellido || ' ' 
+			|| pro.nombre || ', ' || me.fecha || ', ' || me.hora as descripcion from mesas_examen me 	join materias ma on ma.id = me.id_materia join profesores pro on pro.id = me.id_profesor where $where";
 			return toba::db()->consultar($sql);
 		}
 		function get_estadosinscripcion($where='1=1')
