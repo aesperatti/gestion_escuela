@@ -89,5 +89,20 @@ class ci_abminscripciones extends gestion_escuela_ci
 	{
 	}
 
+	function get_materiasporcarrera(){
+		
+		if (!isset($this->s__datos)){
+			return array();
+		}
+
+		$idcarrera = $this->s__datos[0]['id_carrera'];
+
+		//Metodo toba para prevenir inyeccion sql
+		$idcarrera = toba::db()->quote($idcarrera); 
+		
+		$sql = "select * from materias where id_carrera=$idcarrera";
+		
+		return toba::db()->consultar($sql);
+	}
 }
 ?>

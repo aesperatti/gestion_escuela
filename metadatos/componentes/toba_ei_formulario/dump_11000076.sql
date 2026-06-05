@@ -253,11 +253,11 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	NULL, --estado_defecto
 	'0', --solo_lectura
 	'0', --solo_lectura_modificacion
-	'get_materias', --carga_metodo
+	'get_materiasporcarrera', --carga_metodo
 	NULL, --carga_clase
 	NULL, --carga_include
 	NULL, --carga_dt
-	'91000001', --carga_consulta_php
+	NULL, --carga_consulta_php
 	NULL, --carga_sql
 	'gestion_escuela', --carga_fuente
 	NULL, --carga_lista
