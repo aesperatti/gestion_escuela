@@ -31,7 +31,9 @@
 
 		function get_materias_fecha($id_materia)
 		{
-			$sql="select fecha_mesa from materias where id='$id_materia'";
+			$sql="select 
+					TO_CHAR(fecha_mesa, 'DD/MM/YYYY') as fecha_mesa 
+				  from materias where id='$id_materia'";
 			return toba::db()->consultar($sql);
 		}
 
