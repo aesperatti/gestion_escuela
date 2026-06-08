@@ -100,20 +100,6 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
 	'91000065', --objeto
-	'91000045', --col_id
-	'id_mesa', --columna
-	'E', --tipo
-	'0', --pk
-	NULL, --secuencia
-	NULL, --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'inscripciones'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'91000065', --objeto
 	'91000046', --col_id
 	'fecha_inscripcion', --columna
 	'F', --tipo
@@ -130,6 +116,20 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'91000065', --objeto
 	'91000047', --col_id
 	'id_estado', --columna
+	'E', --tipo
+	'0', --pk
+	NULL, --secuencia
+	NULL, --largo
+	NULL, --no_nulo
+	'0', --no_nulo_db
+	'0', --externa
+	'inscripciones'  --tabla
+);
+INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
+	'gestion_escuela', --objeto_proyecto
+	'91000065', --objeto
+	'91000053', --col_id
+	'id_materia', --columna
 	'E', --tipo
 	'0', --pk
 	NULL, --secuencia

@@ -100,5 +100,13 @@
 			$sql="select * from aulas where $where";
 			return toba::db()->consultar($sql);
 		}
-
+		function get_inscripcionesporalumno($idalumno)
+		{
+			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, ei.descripcion as desc_estado, ca.descripcion as desccarrera 
+			from inscripciones insc 
+			join estados_inscripcion ei on ei.id = insc.id_estado
+			join materias ma on ma.id=insc.id_materia 
+			join carrera ca on ma.id_carrera=ca.id where insc.id_alumno=$idalumno";
+			return toba::db()->consultar($sql);
+		}
     }

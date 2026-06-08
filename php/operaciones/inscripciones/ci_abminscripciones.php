@@ -113,7 +113,24 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 * El formato de carga es de tipo recordset: array( array('columna' => valor, ...), ...)
 	 */
 	function conf__cuadro2(gestion_escuela_ei_cuadro $cuadro)
-	{
+	{                
+		$id=$this->s__datos[0]['id'];
+		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id);
+		foreach ($datos as $clave => $fila) {
+            $color = '';
+            
+            switch ($fila['id_estado']) {
+                case 1: $color = '#ff9800'; break; // Naranja
+                case 2: $color = '#4caf50'; break; // Verde
+                case 3: $color = '#f44336'; break; // Rojo
+                case 4: $color = '#9e9e9e'; break; // Gris
+                case 5: $color = '#2196f3'; break; // Azul
+            }
+            
+            // 3. Sobrescribimos el texto plano con una etiqueta <span> HTML
+            $datos[$clave]['desc_estado'] = "<span style='color: {$color}; font-weight: bold;'>{$fila['desc_estado']}</span>";
+        }
+		$cuadro->set_datos($datos); 
 	}
 
 	/**
@@ -122,6 +139,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 */
 	function evt__cuadro2__seleccion($seleccion)
 	{
+		$this->dep('datos')->cargar($seleccion);	
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -143,9 +161,33 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 * Atrapa la interacci�n del usuario con el bot�n asociado
 	 * @param array $datos Estado del componente al momento de ejecutar el evento. El formato es el mismo que en la carga de la configuraci�n
 	 */
+	protected function formatear_fecha_bd($fecha_pantalla)
+    {
+        // Si no mandaron nada, no hacemos nada
+        if (empty($fecha_pantalla)) {
+            return $fecha_pantalla;
+        }
+
+        // Intentamos crear el objeto desde el formato argentino
+        $fecha_objeto = DateTime::createFromFormat('d/m/Y', $fecha_pantalla);
+        
+        if ($fecha_objeto !== false) {
+            // Si tuvo éxito, la devolvemos en formato base de datos
+            return $fecha_objeto->format('Y-m-d');
+        }
+
+        // Si falló (por ejemplo, si ya venía como Y-m-d por algún motivo), 
+        // devolvemos el original para que la base de datos decida qué hacer.
+        return $fecha_pantalla;
+    }
+
 	function evt__formulario_inscri__alta($datos)
 	{
 		try{
+			
+			$datos['id_alumno']= $this->s__datos[0]['id'];
+			//Formateo de fecha porque postgres me da error de formato, valor fuera de rango
+			$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
 			$this->dep('datos')->set($datos);
 			$this->dep('datos')->sincronizar();
 			$this->dep('datos')->resetear();
@@ -178,6 +220,8 @@ class ci_abminscripciones extends gestion_escuela_ci
 	function evt__formulario_inscri__modificacion($datos)
 	{
 		try{
+			$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
+			
 			$this->dep('datos')->set($datos);
 			$this->dep('datos')->sincronizar();
 			$this->dep('datos')->resetear();
@@ -194,6 +238,17 @@ class ci_abminscripciones extends gestion_escuela_ci
 	function evt__formulario_inscri__cancelar()
 	{
 		$this->dep('datos')->resetear();		
+	}
+
+	//-----------------------------------------------------------------------------------
+	//---- Eventos ----------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------
+
+	function evt__volver()
+	{
+			$this->dep('datos')->resetear();
+            unset($this->s__datos);
+            $this->set_pantalla('pant_inicial');  
 	}
 
 }
