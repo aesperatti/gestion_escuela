@@ -50,7 +50,18 @@
 		}
 		function get_mesas($where='1=1')
 		{
-			$sql="select me.id, ca.descripcion as desccarrera, ma.nombre as descmateria, pro.apellido || ', ' || pro.nombre as descprofesor, me.fecha, me.hora, me.cupo, au.descripcion as descaula from mesas_examen me join materias ma on ma.id = me.id_materia join profesores pro on pro.id = ma.id_profesor join carrera ca on ma.id_carrera=ca.id join aulas au on me.id_aula=au.id where $where";
+			$sql="select me.id, ca.descripcion as desccarrera,
+			             ma.nombre as descmateria, 
+						 pro.apellido || ', ' || pro.nombre as descprofesor, 
+						 me.fecha, 
+						 au.descripcion as descaula,
+						 ca.id as id_carrera 
+				    from mesas_examen me 
+					join materias ma on ma.id = me.id_materia 
+					join profesores pro on pro.id = ma.id_profesor 
+					join carrera ca on ma.id_carrera=ca.id 
+					join aulas au on me.id_aula=au.id 
+					where $where";
 			return toba::db()->consultar($sql);
 		}
 		function get_mesasparacombo($where='1=1')
@@ -109,4 +120,14 @@
 			join carrera ca on ma.id_carrera=ca.id where insc.id_alumno=$idalumno";
 			return toba::db()->consultar($sql);
 		}
+		function get_mesaincripcion($idmateria)
+		{
+			$sql="select * from mesas_examen where id_materia=$idmateria";
+		
+			return toba::db()->consultar($sql);
+		}
+		
+		
     }
+
+	

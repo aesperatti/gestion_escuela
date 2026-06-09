@@ -107,7 +107,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 	//-----------------------------------------------------------------------------------
 	//---- cuadro2 ----------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------
-
+	
 	/**
 	 * Permite cambiar la configuraci�n del cuadro previo a la generaci�n de la salida
 	 * El formato de carga es de tipo recordset: array( array('columna' => valor, ...), ...)
@@ -180,18 +180,26 @@ class ci_abminscripciones extends gestion_escuela_ci
         // devolvemos el original para que la base de datos decida qué hacer.
         return $fecha_pantalla;
     }
-
+	function get_fechamesa($id){
+		$sql = "select fecha from mesas_examen where id=$id";
+		
+		return toba::db()->consultar($sql);
+	}
 	function evt__formulario_inscri__alta($datos)
 	{
 		try{
-			
 			$datos['id_alumno']= $this->s__datos[0]['id'];
+			$idfecha=$datos['fecha_inscripcion'];
+			$fechas=$this->get_fechamesa($idfecha);
+			
+			$datos['fecha_inscripcion']=$fechas[0]['fecha'];
 			//Formateo de fecha porque postgres me da error de formato, valor fuera de rango
-			$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
+			//$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
 			$this->dep('datos')->set($datos);
 			$this->dep('datos')->sincronizar();
 			$this->dep('datos')->resetear();
 		}catch (toba_error_db $e){
+			
 			if($e->get_sqlstate()=="db_23505"){
 				toba::notificacion()->agregar('ATENCION!! El registro ya Existe.');
 			}
@@ -220,8 +228,11 @@ class ci_abminscripciones extends gestion_escuela_ci
 	function evt__formulario_inscri__modificacion($datos)
 	{
 		try{
-			$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
+			//$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
+			$idfecha=$datos['fecha_inscripcion'];
+			$fechas=$this->get_fechamesa($idfecha);
 			
+			$datos['fecha_inscripcion']=$fechas[0]['fecha'];
 			$this->dep('datos')->set($datos);
 			$this->dep('datos')->sincronizar();
 			$this->dep('datos')->resetear();

@@ -2,6 +2,7 @@
 class ci_mesasexamen extends gestion_escuela_ci
 {
 	protected $s__filtro;
+	protected $s__carrera;
    
 	//-----------------------------------------------------------------------------------
 	//---- Configuraciones --------------------------------------------------------------
@@ -135,7 +136,17 @@ class ci_mesasexamen extends gestion_escuela_ci
 	 */
 	function conf__formulario(gestion_escuela_ei_formulario $form)
 	{
-		$form->set_datos($this->dep('datos')->get());	           
+
+		if ($this->dep('datos')->esta_cargada()) {
+			$datos=$this->dep('datos')->get();
+			$id_materia=$datos['id_materia'];
+			$where="id=$id_materia";
+			$resultado = toba::consulta_php('gestion_escuela')->get_materias($where);
+			$datos['id_carrera']=$resultado[0]['id_carrera'];
+		}else{
+			$datos=$this->dep('datos')->get();
+		}	
+		$form->set_datos($datos);	           
 	
 	}
 

@@ -242,7 +242,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'1', --orden
 	'Materia', --etiqueta
 	NULL, --etiqueta_estilo
-	NULL, --descripcion
+	'Para poder Seleccionar una Materia, esta debe tener Asignada una Fecha de Mesa.', --descripcion
 	'0', --colapsado
 	'0', --desactivado
 	NULL, --estilo
@@ -334,7 +334,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	NULL, --estado_defecto
 	'0', --solo_lectura
 	'0', --solo_lectura_modificacion
-	'get_materias_fecha', --carga_metodo
+	'get_mesaincripcion', --carga_metodo
 	NULL, --carga_clase
 	NULL, --carga_include
 	NULL, --carga_dt
@@ -342,8 +342,8 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	NULL, --carga_sql
 	'gestion_escuela', --carga_fuente
 	NULL, --carga_lista
-	'fecha_mesa', --carga_col_clave
-	'fecha_mesa', --carga_col_desc
+	'id', --carga_col_clave
+	'fecha', --carga_col_desc
 	'id_materia', --carga_maestros
 	'0', --carga_cascada_relaj
 	'0', --cascada_mantiene_estado

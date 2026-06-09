@@ -100,51 +100,9 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
 	'gestion_escuela', --objeto_proyecto
 	'4000052', --objeto
-	'4000024', --col_id
-	'id_profesor', --columna
-	'E', --tipo
-	'0', --pk
-	NULL, --secuencia
-	NULL, --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'mesas_examen'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000052', --objeto
 	'4000025', --col_id
 	'fecha', --columna
 	'F', --tipo
-	'0', --pk
-	NULL, --secuencia
-	NULL, --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'mesas_examen'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000052', --objeto
-	'4000026', --col_id
-	'hora', --columna
-	'T', --tipo
-	'0', --pk
-	NULL, --secuencia
-	NULL, --largo
-	NULL, --no_nulo
-	'0', --no_nulo_db
-	'0', --externa
-	'mesas_examen'  --tabla
-);
-INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
-	'gestion_escuela', --objeto_proyecto
-	'4000052', --objeto
-	'4000028', --col_id
-	'cupo', --columna
-	'E', --tipo
 	'0', --pk
 	NULL, --secuencia
 	NULL, --largo
