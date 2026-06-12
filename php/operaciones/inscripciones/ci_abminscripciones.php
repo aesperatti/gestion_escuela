@@ -262,5 +262,108 @@ class ci_abminscripciones extends gestion_escuela_ci
             $this->set_pantalla('pant_inicial');  
 	}
 
+	/**
+	 * Atrapa la interacci�n del usuario a trav�s del bot�n asociado. El m�todo no recibe par�metros
+	 */
+	function evt__mail()
+	{
+	}
+
+	//-----------------------------------------------------------------------------------
+	//---- Configuraciones --------------------------------------------------------------
+	//-----------------------------------------------------------------------------------
+
+	/**
+	 * Ventana de extensi�n para configurar la pantalla. Se ejecuta previo a la configuraci�n de los componentes pertenecientes a la pantalla 
+	 * por lo que es ideal por ejemplo para ocultarlos en base a una condici�n din�mica, ej. $pant->eliminar_dep("tal") 
+	 * @param toba_ei_pantalla $pantalla
+	 */
+	function conf__pant_edicion(toba_ei_pantalla $pantalla)
+	{
+		//Valida que tenga Pendientes
+		$id=$this->s__datos[0]['id'];
+		$datos = toba::consulta_php('gestion_escuela')->get_estadospendientes_inscripciones($id);
+		$pendientes=$datos[0]['pendientes'];
+
+		//Valido que tenga Inscripciones
+		$datos2 = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id);
+
+		if(!count($datos2) or $pendientes>0){
+			$this->evento('mail')->desactivar();;
+		}
+	}
+
+
+	function procesar_envio($mesas_index,$profesor,$asunto,$para)
+	{
+
+		$cuerpo = "<html>
+					<head>
+						<title>Envio de mesas de examen</title>
+					</head>
+					<body>
+						<B>MESAS DE EXAMENES</B>
+						<BR><BR>
+						<B><I>Profesor: $profesor</B></I><br><br>
+						";
+		$carrera='';
+		$ano='';
+		foreach ($mesas_index as $key => $value) {
+			if (($value['desc_carrera'] != $carrera) or ($value['ano'] != $ano)){
+				if ($ano != ''){
+					$cuerpo.="</table><br>";
+				}
+			}
+			if ($value['desc_carrera'] != $carrera){
+				
+				$carrera=$value['desc_carrera'];
+				$cuerpo.="<b>Carrera: $carrera</b><br>";
+			}
+			if ($value['ano'] != $ano){
+				$ano=$value['ano'];
+				$cuerpo.="<b>Ano: $ano</b><br>";
+				$cuerpo.= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" >
+						<tr>
+							<td>Fecha</td>
+							<td>Dia</td>
+							<td>Materia</td>
+						</tr>";
+			} 
+			$fecha_mesa=date("d/m/Y",strtotime($value['fecha_mesa']));
+			$dia=$value['dia'];
+			$materia=$value['materia'];
+			$cuerpo .= "<tr>
+							<td>$fecha_mesa</td>
+							<td>$dia</td>
+							<td>$materia</td>
+						</tr>";
+
+		}
+		$cuerpo .= "	</table>
+						<br>
+						Saludos Cordiales...
+					</body>
+					</html>";
+
+	  	// Llamada al WebService
+		$client = new SoapClient("http://192.168.0.30/despacharmail/wsdm.asmx?wsdl", array('cache_wsdl' => WSDL_CACHE_NONE,'trace' => TRUE));
+
+		if (!mb_detect_encoding($asunto, 'UTF-8', true)) {
+    		$asunto = mb_convert_encoding($asunto, 'UTF-8', 'ISO-8859-1');
+		}
+		if (!mb_detect_encoding($cuerpo, 'UTF-8', true)) {
+    		$cuerpo = mb_convert_encoding($cuerpo, 'UTF-8', 'ISO-8859-1');
+		}
+
+
+		$param = array('asmail' => $para,'asasunto' =>$asunto, 'astexto'=>$cuerpo);
+        $ready = $client->insertarmail($param);
+
+        //$objeto= $ready->ExecuteFileTransactionSLResult;
+        //$xml = @new SimpleXMLElement($objeto);
+		//var_dump($result);
+
+	}	
+
 }
 ?>

@@ -120,6 +120,15 @@
 			join carrera ca on ma.id_carrera=ca.id where insc.id_alumno=$idalumno";
 			return toba::db()->consultar($sql);
 		}
+
+		function get_estadospendientes_inscripciones($idalumno)
+		{
+			$sql="select count(1) as pendientes  
+			from inscripciones 
+            where id_alumno=$idalumno and id_estado=1";
+			return toba::db()->consultar($sql);
+		}
+
 		function get_mesaincripcion($idmateria)
 		{
 			$sql="select * from mesas_examen where id_materia=$idmateria";
