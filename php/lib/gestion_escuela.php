@@ -80,12 +80,19 @@
 			$sql="select * from carrera where $where";
 			return toba::db()->consultar($sql);
 		}
+		function get_condiciones($where='1=1')
+		{
+			$sql="select * from condicion_inscripcion where $where";
+			return toba::db()->consultar($sql);
+		}
 		function get_inscripciones($where='1=1')
 		{
-			$sql="select insc.id_inscripcion, alu.apellido || ', ' || alu.nombre as nombre_completo, insc.id_mesa, insc.fecha_inscripcion, ei.descripcion as estado, ca.descripcion as desccarrera 
+			$sql="select insc.id_inscripcion, alu.apellido || ', ' || alu.nombre as nombre_completo, insc.fecha_inscripcion, ei.descripcion as estado, ca.descripcion as desccarrera, ci.descripcion as desc_condicion, alu.legajo, alu.dni
 			from inscripciones insc 
 			join estados_inscripcion ei on ei.id = insc.id_estado 
+			join condicion_inscripcion ci on ci.id = insc.id_condicion
 			join alumnos alu on insc.id_alumno=alu.id 
+			join materias ma on ma.id = insc.id_materia
 			join carrera ca on alu.id_carrera=ca.id where $where";
 			return toba::db()->consultar($sql);
 		}
@@ -100,7 +107,11 @@
 			return toba::db()->consultar($sql);
 		}
 
-
+		function get_materias_xprofesor($profesor=null)
+		{
+			$sql="select * from materias where id_profesor=$profesor";
+			return toba::db()->consultar($sql);
+		}
 		function get_carrera_materias($carrera=null)
 		{
 			$sql="select * from materias where id_carrera=$carrera";
@@ -113,9 +124,10 @@
 		}
 		function get_inscripcionesporalumno($idalumno)
 		{
-			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, ei.descripcion as desc_estado, ca.descripcion as desccarrera 
+			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera 
 			from inscripciones insc 
 			join estados_inscripcion ei on ei.id = insc.id_estado
+			join condicion_inscripcion ci on ci.id = insc.id_condicion
 			join materias ma on ma.id=insc.id_materia 
 			join carrera ca on ma.id_carrera=ca.id where insc.id_alumno=$idalumno";
 			return toba::db()->consultar($sql);
