@@ -3,8 +3,8 @@ class ci_abminscripciones extends gestion_escuela_ci
 {
 	protected $s__filtro;
 	protected $s__datos;
-	protected $mesa;
-	protected $alumno;
+	protected $s__alumno;
+
 
 	//-----------------------------------------------------------------------------------
 	//---- cuadro -----------------------------------------------------------------------
@@ -78,7 +78,10 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 */
 	function conf__formulario(gestion_escuela_ei_formulario $form)
 	{
-		$form->set_datos($this->s__datos[0]);	
+		$form->set_datos($this->s__datos[0]);
+			
+			
+
 	}
 
 	/**
@@ -267,6 +270,9 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 */
 	function evt__mail()
 	{
+		$mesas=$this->s__datos[0]['id'];
+		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($mesas);
+		$this->procesar_envio($this->s__datos,$mesas);
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -294,22 +300,38 @@ class ci_abminscripciones extends gestion_escuela_ci
 	}
 
 
-	function procesar_envio($mesas_index,$profesor,$asunto,$para)
+	function procesar_envio($alumno,$mesas)
 	{
+		ei_arbol($mesas);
+		$nombre=$alumno[0]['nombre'];
+		$apellido=$alumno[0]['apellido'];
+		$legajo=$alumno[0]['legajo'];
+		$dni=$alumno[0]['dni'];
+		$email=$alumno[0]['email'];
+		$carrera_nombre=$alumno[0]['desccarrera'];
+		
+
+
+
 
 		$cuerpo = "<html>
 					<head>
-						<title>Envio de mesas de examen</title>
+						<title>Estado de tus Inscripciones a las Mesas de Examen</title>
 					</head>
 					<body>
-						<B>MESAS DE EXAMENES</B>
-						<BR><BR>
-						<B><I>Profesor: $profesor</B></I><br><br>
-						";
-		$carrera='';
-		$ano='';
-		foreach ($mesas_index as $key => $value) {
-			if (($value['desc_carrera'] != $carrera) or ($value['ano'] != $ano)){
+						<B>DATOS DEL ALUMNO</B>
+						<B><I>Alumno: $nombre $apellido/I><br><br>
+						<B>MESAS A LAS QUE TE INSCRIBISTE:<B>
+
+			
+						<B><I>MESAS:$mesas</B></I><br><br>
+
+
+					";
+
+
+		foreach ($mesas as $key => $value) {
+			if (($value['desccarrera'] != $carrera) or ($value['ano'] != $ano)){
 				if ($ano != ''){
 					$cuerpo.="</table><br>";
 				}
@@ -329,13 +351,14 @@ class ci_abminscripciones extends gestion_escuela_ci
 							<td>Materia</td>
 						</tr>";
 			} 
-			$fecha_mesa=date("d/m/Y",strtotime($value['fecha_mesa']));
-			$dia=$value['dia'];
-			$materia=$value['materia'];
+
+			$fecha_inscripcion=date("d/m/Y",strtotime($value['fecha_inscripcion']));
+			//$dia=$value['dia'];
+			$desc_materia=$value['materia'];
 			$cuerpo .= "<tr>
-							<td>$fecha_mesa</td>
-							<td>$dia</td>
-							<td>$materia</td>
+							<td>$fecha_inscripcion</td>
+							<td>$desc_materia</td>
+							<td>$desc_estado<td>
 						</tr>";
 
 		}
@@ -344,6 +367,10 @@ class ci_abminscripciones extends gestion_escuela_ci
 						Saludos Cordiales...
 					</body>
 					</html>";
+
+
+
+
 
 	  	// Llamada al WebService
 		$client = new SoapClient("http://192.168.0.30/despacharmail/wsdm.asmx?wsdl", array('cache_wsdl' => WSDL_CACHE_NONE,'trace' => TRUE));
@@ -364,6 +391,29 @@ class ci_abminscripciones extends gestion_escuela_ci
 		//var_dump($result);
 
 	}	
+
+	function evt__formulario__guardar()
+	{
+		 try{
+                $this->dep('datos')->sincronizar();
+				$this->dep('datos')->resetear();
+            }catch(toba_error_db $e){
+                /* Error al grabar */
+                if($e->get_sqlstate()=="db_23505"){
+                    /* Clave Duplicada */
+                    $mensaje ="Ya existe el alumno que desea agregar";
+                    toba::notificacion()->agregar($mensaje);
+                }else {
+                    $mensaje_usuario='ERROR al guardar. Los cambios NO fueron registrados.';
+                    $mensaje='<br><br>Información Adicional: ';
+                    $mensaje.='<br><strong>Error Nº </strong>'.$e->get_sqlstate();
+                    $mensaje.='<br><br><strong> Mensaje: </strong>'.$e->get_mensaje_motor();
+                    throw new toba_error($mensaje_usuario,$mensaje);
+                    //toba::notificacion()->agregar($mensaje);
+                }
+            }
+          
+	}
 
 }
 ?>
