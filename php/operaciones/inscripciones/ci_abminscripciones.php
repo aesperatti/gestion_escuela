@@ -78,7 +78,15 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 */
 	function conf__formulario(gestion_escuela_ei_formulario $form)
 	{
-		$form->set_datos($this->s__datos[0]);	
+		$form->set_datos($this->s__datos[0]);
+		ei_arbol($this->s__datos);	
+		if($this->s__datos[0]['email']==null){
+
+			$this->evento('mail')->desactivar();
+			$form->ef('email')->set_solo_lectura(false);
+		} else {
+			$form->evento('modificacion2')->desactivar();
+		}
 	}
 
 	/**
@@ -87,6 +95,37 @@ class ci_abminscripciones extends gestion_escuela_ci
 	 */
 	function evt__formulario__modificacion($datos)
 	{
+			try{	
+			//$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
+			$this->s__datos[0]['email']=$datos['email'];
+			$clave= array('id' => $this->s__datos[0]['id']);
+			$this->dep('dt_alumnos')->cargar($clave);
+			$this->dep('dt_alumnos')->set($this->s__datos[0]);
+			$this->dep('dt_alumnos')->sincronizar();
+			$this->dep('dt_alumnos')->resetear();
+		}catch (toba_error_db $e){
+			if($e->get_sqlstate()=="db_23505"){
+				toba::notificacion()->agregar('ATENCION!! El registro ya Existe.');
+			}}
+	}
+	function evt__formulario__modificacion2($datos)
+	{
+
+		try{	
+			//$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
+			$this->s__datos[0]['email']=$datos['email'];
+			
+			$clave= array('id' => $this->s__datos[0]['id']);
+			
+			$this->dep('dt_alumnos')->cargar($clave);
+			$this->dep('dt_alumnos')->set($this->s__datos[0]);
+			$this->dep('dt_alumnos')->sincronizar();
+			$this->dep('dt_alumnos')->resetear();
+		}catch (toba_error_db $e){
+			if($e->get_sqlstate()=="db_23505"){
+				toba::notificacion()->agregar('ATENCION!! El registro ya Existe.');
+			}}
+
 	}
 
 	function get_materiasporcarrera(){
@@ -289,7 +328,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 		$datos2 = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id);
 
 		if(!count($datos2) or $pendientes>0){
-			$this->evento('mail')->desactivar();;
+			$this->evento('mail')->desactivar();
 		}
 	}
 
