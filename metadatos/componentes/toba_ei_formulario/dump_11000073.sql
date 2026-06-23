@@ -79,21 +79,18 @@ INSERT INTO apex_objeto_eventos (proyecto, evento_id, objeto, identificador, eti
 	'0', --es_seleccion_multiple
 	'0'  --es_autovinculo
 );
---- FIN Grupo de desarrollo 11
-
---- INICIO Grupo de desarrollo 91
 INSERT INTO apex_objeto_eventos (proyecto, evento_id, objeto, identificador, etiqueta, maneja_datos, sobre_fila, confirmacion, estilo, imagen_recurso_origen, imagen, en_botonera, ayuda, orden, ci_predep, implicito, defecto, display_datos_cargados, grupo, accion, accion_imphtml_debug, accion_vinculo_carpeta, accion_vinculo_item, accion_vinculo_objeto, accion_vinculo_popup, accion_vinculo_popup_param, accion_vinculo_target, accion_vinculo_celda, accion_vinculo_servicio, es_seleccion_multiple, es_autovinculo) VALUES (
 	'gestion_escuela', --proyecto
-	'91000122', --evento_id
+	'11000088', --evento_id
 	'11000073', --objeto
-	'modificacion2', --identificador
-	'Guardar', --etiqueta
-	'1', --maneja_datos
+	'guardar', --identificador
+	'guardar', --etiqueta
+	'0', --maneja_datos
 	NULL, --sobre_fila
 	NULL, --confirmacion
 	NULL, --estilo
 	'apex', --imagen_recurso_origen
-	NULL, --imagen
+	'guardar.gif', --imagen
 	'1', --en_botonera
 	NULL, --ayuda
 	'2', --orden
@@ -115,7 +112,7 @@ INSERT INTO apex_objeto_eventos (proyecto, evento_id, objeto, identificador, eti
 	'0', --es_seleccion_multiple
 	'0'  --es_autovinculo
 );
---- FIN Grupo de desarrollo 91
+--- FIN Grupo de desarrollo 11
 
 ------------------------------------------------------------
 -- apex_objeto_ut_formulario
@@ -513,7 +510,7 @@ INSERT INTO apex_objeto_ei_formulario_ef (objeto_ei_formulario_fila, objeto_ei_f
 	'0', --deshabilitar_rest_func
 	NULL, --estado_defecto
 	'1', --solo_lectura
-	'0', --solo_lectura_modificacion
+	'1', --solo_lectura_modificacion
 	NULL, --carga_metodo
 	NULL, --carga_clase
 	NULL, --carga_include

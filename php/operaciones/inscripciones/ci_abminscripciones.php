@@ -79,20 +79,13 @@ class ci_abminscripciones extends gestion_escuela_ci
 	function conf__formulario(gestion_escuela_ei_formulario $form)
 	{
 		$form->set_datos($this->s__datos[0]);
-<<<<<<< HEAD
-			
-			
-
-=======
-		ei_arbol($this->s__datos);	
 		if($this->s__datos[0]['email']==null){
 
 			$this->evento('mail')->desactivar();
 			$form->ef('email')->set_solo_lectura(false);
 		} else {
-			$form->evento('modificacion2')->desactivar();
+			$form->evento('guardar')->desactivar();
 		}
->>>>>>> dda9acc9e5f776a9ea4ed93785ec9775d5c1c5d4
 	}
 
 	/**
@@ -105,34 +98,16 @@ class ci_abminscripciones extends gestion_escuela_ci
 			//$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
 			$this->s__datos[0]['email']=$datos['email'];
 			$clave= array('id' => $this->s__datos[0]['id']);
-			$this->dep('dt_alumnos')->cargar($clave);
-			$this->dep('dt_alumnos')->set($this->s__datos[0]);
-			$this->dep('dt_alumnos')->sincronizar();
-			$this->dep('dt_alumnos')->resetear();
+			$this->dep('datos')->cargar($clave);
+			$this->dep('datos')->set($this->s__datos[0]);
+			$this->dep('datos')->sincronizar();
+			$this->dep('datos')->resetear();
 		}catch (toba_error_db $e){
 			if($e->get_sqlstate()=="db_23505"){
 				toba::notificacion()->agregar('ATENCION!! El registro ya Existe.');
 			}}
 	}
-	function evt__formulario__modificacion2($datos)
-	{
-
-		try{	
-			//$datos['fecha_inscripcion'] = $this->formatear_fecha_bd($datos['fecha_inscripcion']);
-			$this->s__datos[0]['email']=$datos['email'];
-			
-			$clave= array('id' => $this->s__datos[0]['id']);
-			
-			$this->dep('dt_alumnos')->cargar($clave);
-			$this->dep('dt_alumnos')->set($this->s__datos[0]);
-			$this->dep('dt_alumnos')->sincronizar();
-			$this->dep('dt_alumnos')->resetear();
-		}catch (toba_error_db $e){
-			if($e->get_sqlstate()=="db_23505"){
-				toba::notificacion()->agregar('ATENCION!! El registro ya Existe.');
-			}}
-
-	}
+	
 
 	function get_materiasporcarrera(){
 		
@@ -314,7 +289,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 	{
 		$mesas=$this->s__datos[0]['id'];
 		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($mesas);
-		$this->procesar_envio($this->s__datos,$mesas);
+		$this->procesar_envio($this->s__datos,$datos);
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -344,75 +319,43 @@ class ci_abminscripciones extends gestion_escuela_ci
 
 	function procesar_envio($alumno,$mesas)
 	{
-		ei_arbol($mesas);
+
 		$nombre=$alumno[0]['nombre'];
 		$apellido=$alumno[0]['apellido'];
 		$legajo=$alumno[0]['legajo'];
 		$dni=$alumno[0]['dni'];
 		$email=$alumno[0]['email'];
-		$carrera_nombre=$alumno[0]['desccarrera'];
-		
+		$carrera=$alumno[0]['desccarrera'];
 
-
-
-
-		$cuerpo = "<html>
-					<head>
-						<title>Estado de tus Inscripciones a las Mesas de Examen</title>
-					</head>
-					<body>
-						<B>DATOS DEL ALUMNO</B>
-						<B><I>Alumno: $nombre $apellido/I><br><br>
-						<B>MESAS A LAS QUE TE INSCRIBISTE:<B>
-
-			
-						<B><I>MESAS:$mesas</B></I><br><br>
-
-
+		$asunto= "Estado de tus Inscripciones a las Mesas de Examen";
+		$para=$email;		
+		$cuerpo = "	Hola: <b>$apellido, $nombre</b> - <i>($legajo - $dni)</i>
+		            <br><br>
 					";
 
+		$cuerpoa="";	
+		$cuerpor="";		
+		foreach ($mesas as $indice=>$elem) {
 
-		foreach ($mesas as $key => $value) {
-			if (($value['desccarrera'] != $carrera) or ($value['ano'] != $ano)){
-				if ($ano != ''){
-					$cuerpo.="</table><br>";
-				}
+		    $desc_materia=$elem['desc_materia'];
+			$fecha_inscripcion=date("d/m/Y",strtotime($elem['fecha_inscripcion']));
+			if($elem['id_estado']==2){  // Materias aprobadas
+				$cuerpoa.= "$fecha_inscripcion - $desc_materia - $carrera";
+			}else{
+				$cuerpor.="$fecha_inscripcion - $desc_materia - $carrera";
 			}
-			if ($value['desc_carrera'] != $carrera){
-				
-				$carrera=$value['desc_carrera'];
-				$cuerpo.="<b>Carrera: $carrera</b><br>";
-			}
-			if ($value['ano'] != $ano){
-				$ano=$value['ano'];
-				$cuerpo.="<b>Ano: $ano</b><br>";
-				$cuerpo.= "<table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" >
-						<tr>
-							<td>Fecha</td>
-							<td>Dia</td>
-							<td>Materia</td>
-						</tr>";
-			} 
-
-			$fecha_inscripcion=date("d/m/Y",strtotime($value['fecha_inscripcion']));
-			//$dia=$value['dia'];
-			$desc_materia=$value['materia'];
-			$cuerpo .= "<tr>
-							<td>$fecha_inscripcion</td>
-							<td>$desc_materia</td>
-							<td>$desc_estado<td>
-						</tr>";
 
 		}
-		$cuerpo .= "	</table>
-						<br>
-						Saludos Cordiales...
-					</body>
-					</html>";
 
+		if($cuerpoa){
+			$cuerpo .= "<b>Inscripciones Aprobadas</b><br>".$cuerpoa."<br><br>";
+		}
 
+		if($cuerpor){
+			$cuerpo .= "<b>Inscripciones Rechazadas</b><br>".$cuerpor."<br><br>";
+		}
 
-
+		$cuerpo .= "Saludos Cordiales...";
 
 	  	// Llamada al WebService
 		$client = new SoapClient("http://192.168.0.30/despacharmail/wsdm.asmx?wsdl", array('cache_wsdl' => WSDL_CACHE_NONE,'trace' => TRUE));
@@ -428,10 +371,10 @@ class ci_abminscripciones extends gestion_escuela_ci
 		$param = array('asmail' => $para,'asasunto' =>$asunto, 'astexto'=>$cuerpo);
         $ready = $client->insertarmail($param);
 
-        //$objeto= $ready->ExecuteFileTransactionSLResult;
-        //$xml = @new SimpleXMLElement($objeto);
-		//var_dump($result);
-
+        $objeto= $ready->ExecuteFileTransactionSLResult;
+        $xml = @new SimpleXMLElement($objeto);
+		var_dump($xml);
+		
 	}	
 
 	function evt__formulario__guardar()
@@ -456,6 +399,21 @@ class ci_abminscripciones extends gestion_escuela_ci
             }
           
 	}
+
+
+	function ajax__validar_estado($estado, toba_ajax_respuesta $respuesta)
+	{
+
+		if($estado==3){
+			$vuelta=false;
+		}else{
+			$vuelta=true;
+		}
+
+		$respuesta->set($vuelta);
+
+	}
+
 
 }
 ?>

@@ -124,7 +124,14 @@
 		}
 		function get_inscripcionesporalumno($idalumno)
 		{
-			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera 
+			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, 
+			ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera, 
+			
+			CASE
+				WHEN LENGTH(motivo) > 50 THEN LEFT(motivo, 50) || '...'
+				ELSE motivo
+    		END AS motivo
+ 
 			from inscripciones insc 
 			join estados_inscripcion ei on ei.id = insc.id_estado
 			join condicion_inscripcion ci on ci.id = insc.id_condicion
