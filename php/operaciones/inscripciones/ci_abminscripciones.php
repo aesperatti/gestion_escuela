@@ -319,6 +319,8 @@ class ci_abminscripciones extends gestion_escuela_ci
 
 	function procesar_envio($alumno,$mesas)
 	{
+		
+		require_once '/var/www/html/vendor/autoload.php';
 
 		$nombre=$alumno[0]['nombre'];
 		$apellido=$alumno[0]['apellido'];
@@ -356,8 +358,42 @@ class ci_abminscripciones extends gestion_escuela_ci
 		}
 
 		$cuerpo .= "Saludos Cordiales...";
+		try {
+			//el usuario y key de resend
+			$resend = Resend::client(
+				're_EijRSpVS_A79f4DEaYywRhXrzfhDLyTu6'
+			);
+			//dominio del mail(es generico)
+			$resultado = $resend->emails->send([
+				'from' => 'INSTITUTO 189<onboarding@resend.dev>',
+				'to'      => [$email],
+				'subject' => $asunto,
+				'html'    => $cuerpo,
+			]);
+
+			toba::notificacion()->agregar(
+				'Correo enviado correctamente.'
+			);
+
+			toba::logger()->debug(
+				'Mail enviado. ID: ' .
+				(isset($resultado->id) ? $resultado->id : '')
+			);
+
+		} catch (Exception $e) {
+
+			toba::logger()->error(
+				'Error Resend: ' . $e->getMessage()
+			);
+
+			toba::notificacion()->agregar(
+				'Error al enviar correo: ' .
+				$e->getMessage()
+			);
+		}
 
 	  	// Llamada al WebService
+		/*
 		$client = new SoapClient("http://192.168.0.30/despacharmail/wsdm.asmx?wsdl", array('cache_wsdl' => WSDL_CACHE_NONE,'trace' => TRUE));
 
 		if (!mb_detect_encoding($asunto, 'UTF-8', true)) {
@@ -374,6 +410,7 @@ class ci_abminscripciones extends gestion_escuela_ci
         $objeto= $ready->ExecuteFileTransactionSLResult;
         $xml = @new SimpleXMLElement($objeto);
 		var_dump($xml);
+		*/
 		
 	}	
 
@@ -386,7 +423,7 @@ class ci_abminscripciones extends gestion_escuela_ci
                 /* Error al grabar */
                 if($e->get_sqlstate()=="db_23505"){
                     /* Clave Duplicada */
-                    $mensaje ="Ya existe el alumno que desea agregar";
+                    $mensaje ="";
                     toba::notificacion()->agregar($mensaje);
                 }else {
                     $mensaje_usuario='ERROR al guardar. Los cambios NO fueron registrados.';
