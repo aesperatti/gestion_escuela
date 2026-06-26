@@ -290,6 +290,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 		$mesas=$this->s__datos[0]['id'];
 		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($mesas);
 		$this->procesar_envio($this->s__datos,$datos);
+		//ei_arbol($datos);
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -341,10 +342,17 @@ class ci_abminscripciones extends gestion_escuela_ci
 
 		    $desc_materia=$elem['desc_materia'];
 			$fecha_inscripcion=date("d/m/Y",strtotime($elem['fecha_inscripcion']));
+			$motivo = $elem['motivo'];
+
 			if($elem['id_estado']==2){  // Materias aprobadas
 				$cuerpoa.= "$fecha_inscripcion - $desc_materia - $carrera";
 			}else{
-				$cuerpor.="$fecha_inscripcion - $desc_materia - $carrera";
+				$cuerpor.="$fecha_inscripcion - $desc_materia - $carrera ";
+				if ($motivo !== null && $motivo !== '') {
+            		$cuerpor .= "<br>";
+					$cuerpor .= " - MOTIVO: $motivo";
+				}
+				$cuerpor .= "<br>";
 			}
 
 		}
@@ -361,7 +369,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 		try {
 			//el usuario y key de resend
 			$resend = Resend::client(
-				're_EijRSpVS_A79f4DEaYywRhXrzfhDLyTu6'
+				're_iJ9yGeNR_8MyNipvAMcxmn7gTu5ZKGMFL'
 			);
 			//dominio del mail(es generico)
 			$resultado = $resend->emails->send([

@@ -34,7 +34,16 @@ class form_abminscripciones extends gestion_escuela_ei_formulario
 				ef.mostrar();	
 			};
 			ef.set_solo_lectura(respuesta);
-		}		
+		}	
+		
+            {$this->objeto_js}.ini = function () {
+                this.ef('motivo').input().onkeyup = function() {
+                    var ef = {$this->objeto_js}.ef('motivo');
+                    ef.set_estado(ef.get_estado().toUpperCase());
+                }
+                   
+            }
+         
 
 		";
 	}
