@@ -343,12 +343,12 @@ class ci_abminscripciones extends gestion_escuela_ci
 		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id_alumno);
 
 		if ($email === '') {
-			toba::notificacion()->agregar('El alumno no tiene email cargado.', 'info');
+			toba::notificacion()->agregar('El alumno no tiene email cargado.', 'error');
 			return;
 		}
 
 		if (!count($datos)) {
-			toba::notificacion()->agregar('El alumno no tiene inscripciones para informar.', 'info');
+			toba::notificacion()->agregar('El alumno no tiene inscripciones para informar.', 'error');
 			return;
 		}
 
@@ -404,9 +404,9 @@ class ci_abminscripciones extends gestion_escuela_ci
 		$datos2 = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id);
 
 		if (!count($datos2) || $pendientes > 0 || trim($this->s__datos[0]['email']) === '') {
-    $this->evento('mail')->desactivar();
-    return;
-}
+    	$this->evento('mail')->desactivar();
+   		 return;
+		}
 
 		$resumen_mail = $this->get_resumen_envio_mail($id);
 		$cantidad_envios = isset($resumen_mail[0]['cantidad']) ? (int) $resumen_mail[0]['cantidad'] : 0;
@@ -430,7 +430,7 @@ function procesar_envio($alumno, $mesas){
     $carrera = $alumno[0]['desccarrera'];
 
     if ($email === '') {
-        toba::notificacion()->agregar('El alumno no tiene email cargado.');
+        toba::notificacion()->agregar('El alumno no tiene email cargado.', 'error');
         toba::logger()->error('No se pudo enviar correo: alumno sin email.');
         return false;
     }
