@@ -4,7 +4,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 	protected $s__filtro;
 	protected $s__datos;
 	protected $s__alumno;
-
+	protected $s__confirmar_mail;
 
 	//-----------------------------------------------------------------------------------
 	//---- cuadro -----------------------------------------------------------------------
@@ -282,15 +282,106 @@ class ci_abminscripciones extends gestion_escuela_ci
             $this->set_pantalla('pant_inicial');  
 	}
 
+	function get_resumen_envio_mail($id_alumno)
+{
+    $id_alumno = (int) $id_alumno;
+
+    $sql = "
+        SELECT 
+            COUNT(*) AS cantidad,
+            MAX(enviado_en) AS ultimo_envio
+        FROM marcador_envio_de_mail
+        WHERE id_alumno = $id_alumno
+          AND resultado = 'OK'
+    ";
+
+    return toba::db('gestion_escuela')->consultar($sql);
+}
+
+
+	function registrar_envio_mail($id_alumno, $email, $cantidad_inscripciones)
+	{
+		$db = toba::db('gestion_escuela');
+
+		$id_alumno = (int) $id_alumno;
+		$cantidad_inscripciones = (int) $cantidad_inscripciones;
+
+		$email = $db->quote($email);
+		$asunto = $db->quote('Estado de tus Inscripciones a las Mesas de Examen');
+
+		$sql = "
+			INSERT INTO marcador_envio_de_mail
+				(id_alumno, email_destino, asunto, cantidad_inscripciones, resultado)
+			VALUES
+				($id_alumno, $email, $asunto, $cantidad_inscripciones, 'OK')
+		";
+
+		$db->ejecutar($sql);
+	}
+
+	function cambiar_texto_boton_mail($texto)
+	{
+		try {
+			$evento = $this->evento('mail');
+
+			if (method_exists($evento, 'set_etiqueta')) {
+				$evento->set_etiqueta($texto);
+			}
+		} catch (Exception $e) {
+
+		}
+	}
+
 	/**
 	 * Atrapa la interacci�n del usuario a trav�s del bot�n asociado. El m�todo no recibe par�metros
 	 */
 	function evt__mail()
 	{
-		$mesas=$this->s__datos[0]['id'];
-		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($mesas);
-		$this->procesar_envio($this->s__datos,$datos);
-		//ei_arbol($datos);
+		$id_alumno = $this->s__datos[0]['id'];
+		$email = trim($this->s__datos[0]['email']);
+
+		$datos = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id_alumno);
+
+		if ($email === '') {
+			toba::notificacion()->agregar('El alumno no tiene email cargado.', 'info');
+			return;
+		}
+
+		if (!count($datos)) {
+			toba::notificacion()->agregar('El alumno no tiene inscripciones para informar.', 'info');
+			return;
+		}
+
+		$resumen = $this->get_resumen_envio_mail($id_alumno);
+		$cantidad_envios = isset($resumen[0]['cantidad']) ? (int) $resumen[0]['cantidad'] : 0;
+		$ultimo_envio = isset($resumen[0]['ultimo_envio']) ? $resumen[0]['ultimo_envio'] : null;
+
+		if (!isset($this->s__confirmar_mail)) {
+			$this->s__confirmar_mail = true;
+
+			if ($cantidad_envios > 0) {
+				$mensaje = "Ya se envio correo a $email. Envios registrados: $cantidad_envios.";
+
+				if ($ultimo_envio !== null) {
+					$mensaje .= " Ultimo envio: " . date("d/m/Y H:i", strtotime($ultimo_envio)) . ".";
+				}
+
+				$mensaje .= " Presione nuevamente Reenviar correo para confirmar.";
+			} else {
+				$mensaje = "Se enviara correo a $email. Presione nuevamente Enviar correo para confirmar.";
+			}
+
+			toba::notificacion()->agregar($mensaje, 'info');
+			return;
+		}
+
+		unset($this->s__confirmar_mail);
+
+		$enviado = $this->procesar_envio($this->s__datos, $datos);
+
+		if ($enviado) {
+			$this->registrar_envio_mail($id_alumno, $email, count($datos));
+		}
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -312,93 +403,107 @@ class ci_abminscripciones extends gestion_escuela_ci
 		//Valido que tenga Inscripciones
 		$datos2 = toba::consulta_php('gestion_escuela')->get_inscripcionesporalumno($id);
 
-		if(!count($datos2) or $pendientes>0){
-			$this->evento('mail')->desactivar();
+		if (!count($datos2) || $pendientes > 0 || trim($this->s__datos[0]['email']) === '') {
+    $this->evento('mail')->desactivar();
+    return;
+}
+
+		$resumen_mail = $this->get_resumen_envio_mail($id);
+		$cantidad_envios = isset($resumen_mail[0]['cantidad']) ? (int) $resumen_mail[0]['cantidad'] : 0;
+
+		if (isset($this->s__confirmar_mail)) {
+			$this->cambiar_texto_boton_mail('Confirmar envio');
+		} elseif ($cantidad_envios > 0) {
+			$this->cambiar_texto_boton_mail('Reenviar correo (' . $cantidad_envios . ')');
+		} else {
+			$this->cambiar_texto_boton_mail('Enviar correo');
 		}
 	}
 
 
-	function procesar_envio($alumno,$mesas)
-	{
-		
-		require_once '/var/www/html/vendor/autoload.php';
+function procesar_envio($alumno, $mesas){
+    $nombre = $alumno[0]['nombre'];
+    $apellido = $alumno[0]['apellido'];
+    $legajo = $alumno[0]['legajo'];
+    $dni = $alumno[0]['dni'];
+    $email = trim($alumno[0]['email']);
+    $carrera = $alumno[0]['desccarrera'];
 
-		$nombre=$alumno[0]['nombre'];
-		$apellido=$alumno[0]['apellido'];
-		$legajo=$alumno[0]['legajo'];
-		$dni=$alumno[0]['dni'];
-		$email=$alumno[0]['email'];
-		$carrera=$alumno[0]['desccarrera'];
+    if ($email === '') {
+        toba::notificacion()->agregar('El alumno no tiene email cargado.');
+        toba::logger()->error('No se pudo enviar correo: alumno sin email.');
+        return false;
+    }
 
-		$asunto= "Estado de tus Inscripciones a las Mesas de Examen";
-		$para=$email;		
-		$cuerpo = "	Hola: <b>$apellido, $nombre</b> - <i>($legajo - $dni)</i>
-		            <br><br>
-					";
+    $asunto = "Estado de tus Inscripciones a las Mesas de Examen";
 
-		$cuerpoa="";	
-		$cuerpor="";		
-		foreach ($mesas as $indice=>$elem) {
+    $cuerpo = "
+	<div style='color:#222222; font-size:15px; line-height:1.4;'>
+		Hola: <b>$apellido, $nombre</b> - <i>(Legajo: $legajo - DNI: $dni)</i>
+	</div><br>";
 
-		    $desc_materia=$elem['desc_materia'];
-			$fecha_inscripcion=date("d/m/Y",strtotime($elem['fecha_inscripcion']));
-			$motivo = $elem['motivo'];
+    $cuerpoa = "";
+    $cuerpor = "";
 
-			if($elem['id_estado']==2){  // Materias aprobadas
-				$cuerpoa.= "$fecha_inscripcion - $desc_materia - $carrera";
-			}else{
-				$cuerpor.="$fecha_inscripcion - $desc_materia - $carrera ";
-				if ($motivo !== null && $motivo !== '') {
-            		$cuerpor .= "<br>";
-					$cuerpor .= " - MOTIVO: $motivo";
-				}
-				$cuerpor .= "<br>";
-			}
+    foreach ($mesas as $elem) {
+        $desc_materia = $elem['desc_materia'];
+        $fecha_inscripcion = date("d/m/Y", strtotime($elem['fecha_inscripcion']));
+        $motivo = $elem['motivo'];
 
-		}
+        if ($elem['id_estado'] == 2) {
+            $cuerpoa .= "- $fecha_inscripcion - $desc_materia - $carrera<br>";
+        } else {
+            $cuerpor .= "- $fecha_inscripcion - $desc_materia - $carrera";
 
-		if($cuerpoa){
-			$cuerpo .= "<b>Inscripciones Aprobadas</b><br>".$cuerpoa."<br><br>";
-		}
+            if ($motivo !== null && $motivo !== '') {
+                $cuerpor .= "<br>&nbsp;&nbsp;<b>Motivo:</b> $motivo";
+            }
 
-		if($cuerpor){
-			$cuerpo .= "<b>Inscripciones Rechazadas</b><br>".$cuerpor."<br><br>";
-		}
+            $cuerpor .= "<br><br>";
+        }
+    }
 
-		$cuerpo .= "Saludos Cordiales...";
-		try {
-			//el usuario y key de resend
-			$resend = Resend::client(
-				're_iJ9yGeNR_8MyNipvAMcxmn7gTu5ZKGMFL'
-			);
-			//dominio del mail(es generico)
-			$resultado = $resend->emails->send([
-				'from' => 'INSTITUTO 189<onboarding@resend.dev>',
-				'to'      => [$email],
-				'subject' => $asunto,
-				'html'    => $cuerpo,
-			]);
+	if ($cuerpoa) {
+    $cuerpo .= "
+    <div style='color:#2e7d32; font-weight:bold; font-size:15px; margin:12px 0 4px 0;'>
+        Inscripciones Aprobadas
+    </div>";
+    $cuerpo .= "<div style='color:#222222; font-size:14px; line-height:1.4;'>" . $cuerpoa . "</div><br>";
+}
 
-			toba::notificacion()->agregar(
-				'Correo enviado correctamente.'
-			);
+if ($cuerpor) {
+    $cuerpo .= "
+    <div style='color:#c62828; font-weight:bold; font-size:15px; margin:12px 0 4px 0;'>
+        Inscripciones Rechazadas
+    </div>";
+    $cuerpo .= "<div style='color:#222222; font-size:14px; line-height:1.4;'>" . $cuerpor . "</div><br>";
+}
 
-			toba::logger()->debug(
-				'Mail enviado. ID: ' .
-				(isset($resultado->id) ? $resultado->id : '')
-			);
+	$cuerpo .= "
+	<hr style='border:0; border-top:1px solid #ddd; margin-top:20px;'>
+	<div style='font-size:12px; color:#666; line-height:1.4;'>
+		<b>Gestion Escuela</b><br>
+		Mensaje generado automaticamente por el sistema de inscripciones.<br>
+		No responda este correo si no corresponde al tramite academico informado.
+	</div>";
 
-		} catch (Exception $e) {
+    try {
+        $mail = new toba_mail($email, $asunto, $cuerpo);
+        $mail->set_configuracion_smtp('gestion_escuela_smtp');
+        $mail->set_html(true);
+        $mail->enviar();
 
-			toba::logger()->error(
-				'Error Resend: ' . $e->getMessage()
-			);
+		toba::notificacion()->agregar('Correo enviado correctamente.', 'info');
+		toba::logger()->debug("Mail enviado a: $email");
+		return true;
 
-			toba::notificacion()->agregar(
-				'Error al enviar correo: ' .
-				$e->getMessage()
-			);
-		}
+    } catch (Exception $e) {
+        toba::logger()->error('Error de correo Toba: ' . $e->getMessage());
+        toba::notificacion()->agregar('Error al enviar: ' . $e->getMessage(), 'error');
+		return false;
+    }
+}
+
 
 	  	// Llamada al WebService
 		/*
@@ -420,7 +525,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 		var_dump($xml);
 		*/
 		
-	}	
+	//}	
 
 	function evt__formulario__guardar()
 	{
@@ -458,7 +563,5 @@ class ci_abminscripciones extends gestion_escuela_ci
 		$respuesta->set($vuelta);
 
 	}
-
-
 }
 ?>

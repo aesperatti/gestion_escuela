@@ -128,8 +128,8 @@
 			ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera, 
 			
 			CASE
-				WHEN LENGTH(motivo) > 50 THEN LEFT(motivo, 50) || '...'
-				ELSE motivo
+				WHEN insc.motivo IS NOT NULL AND LENGTH(insc.motivo) > 50 THEN LEFT(insc.motivo, 50) || '...'
+				ELSE insc.motivo
     		END AS motivo
  
 			from inscripciones insc 
