@@ -122,11 +122,13 @@
 			$sql="select * from aulas where $where";
 			return toba::db()->consultar($sql);
 		}
+		//CASE WHEN fecha_notificado IS NULL THEN  ELSE TO_CHAR(fecha_notificado, 'DD/MM/YYYY') END AS fecha_notificado, 
+			
 		function get_inscripcionesporalumno($idalumno)
 		{
 			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, 
-			ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera, 
-			
+			ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera,
+			fecha_notificado,
 			CASE
 				WHEN insc.motivo IS NOT NULL AND LENGTH(insc.motivo) > 50 THEN LEFT(insc.motivo, 50) || '...'
 				ELSE insc.motivo

@@ -83,6 +83,20 @@ INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, colum
 	'0', --externa
 	'inscripciones'  --tabla
 );
+INSERT INTO apex_objeto_db_registros_col (objeto_proyecto, objeto, col_id, columna, tipo, pk, secuencia, largo, no_nulo, no_nulo_db, externa, tabla) VALUES (
+	'gestion_escuela', --objeto_proyecto
+	'91000065', --objeto
+	'11000053', --col_id
+	'fecha_notificado', --columna
+	'T', --tipo
+	'0', --pk
+	NULL, --secuencia
+	NULL, --largo
+	NULL, --no_nulo
+	'0', --no_nulo_db
+	'0', --externa
+	'inscripciones'  --tabla
+);
 --- FIN Grupo de desarrollo 11
 
 --- INICIO Grupo de desarrollo 91

@@ -378,6 +378,12 @@ class ci_abminscripciones extends gestion_escuela_ci
 		unset($this->s__confirmar_mail);
 
 		$enviado = $this->procesar_envio($this->s__datos, $datos);
+		
+		foreach ($datos as $clave => $fila) {
+			$sql="UPDATE inscripciones SET fecha_notificado = NOW() WHERE id_inscripcion = " . (int)$fila['id_inscripcion'];
+			toba::db()->ejecutar($sql);
+		}
+
 
 		if ($enviado) {
 			$this->registrar_envio_mail($id_alumno, $email, count($datos));
@@ -448,8 +454,7 @@ function procesar_envio($alumno, $mesas){
     foreach ($mesas as $elem) {
         $desc_materia = $elem['desc_materia'];
         $fecha_inscripcion = date("d/m/Y", strtotime($elem['fecha_inscripcion']));
-        $motivo = $elem['motivo'];
-
+        $motivo = $elem['motivo'];	
         if ($elem['id_estado'] == 2) {
             $cuerpoa .= "- $fecha_inscripcion - $desc_materia - $carrera<br>";
         } else {
