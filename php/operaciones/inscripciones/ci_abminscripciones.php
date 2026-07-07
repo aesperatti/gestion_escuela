@@ -299,21 +299,20 @@ class ci_abminscripciones extends gestion_escuela_ci
 }
 
 
-	function registrar_envio_mail($id_alumno, $email, $cantidad_inscripciones)
+	function registrar_envio_mail($id_alumno, $email)
 	{
 		$db = toba::db('gestion_escuela');
 
 		$id_alumno = (int) $id_alumno;
-		$cantidad_inscripciones = (int) $cantidad_inscripciones;
 
 		$email = $db->quote($email);
 		$asunto = $db->quote('Estado de tus Inscripciones a las Mesas de Examen');
 
 		$sql = "
 			INSERT INTO marcador_envio_de_mail
-				(id_alumno, email_destino, asunto, cantidad_inscripciones, resultado)
+				(id_alumno, email_destino, asunto, resultado)
 			VALUES
-				($id_alumno, $email, $asunto, $cantidad_inscripciones, 'OK')
+				($id_alumno, $email, $asunto, 'OK')
 		";
 
 		$db->ejecutar($sql);
@@ -352,30 +351,9 @@ class ci_abminscripciones extends gestion_escuela_ci
 			return;
 		}
 
-		$resumen = $this->get_resumen_envio_mail($id_alumno);
+		/*$resumen = $this->get_resumen_envio_mail($id_alumno);
 		$cantidad_envios = isset($resumen[0]['cantidad']) ? (int) $resumen[0]['cantidad'] : 0;
-		$ultimo_envio = isset($resumen[0]['ultimo_envio']) ? $resumen[0]['ultimo_envio'] : null;
-
-		if (!isset($this->s__confirmar_mail)) {
-			$this->s__confirmar_mail = true;
-
-			if ($cantidad_envios > 0) {
-				$mensaje = "Ya se envio correo a $email. Envios registrados: $cantidad_envios.";
-
-				if ($ultimo_envio !== null) {
-					$mensaje .= " Ultimo envio: " . date("d/m/Y H:i", strtotime($ultimo_envio)) . ".";
-				}
-
-				$mensaje .= " Presione nuevamente Reenviar correo para confirmar.";
-			} else {
-				$mensaje = "Se enviara correo a $email. Presione nuevamente Enviar correo para confirmar.";
-			}
-
-			toba::notificacion()->agregar($mensaje, 'info');
-			return;
-		}
-
-		unset($this->s__confirmar_mail);
+		$ultimo_envio = isset($resumen[0]['ultimo_envio']) ? $resumen[0]['ultimo_envio'] : null;*/
 
 		$enviado = $this->procesar_envio($this->s__datos, $datos);
 		
@@ -386,7 +364,7 @@ class ci_abminscripciones extends gestion_escuela_ci
 
 
 		if ($enviado) {
-			$this->registrar_envio_mail($id_alumno, $email, count($datos));
+			$this->registrar_envio_mail($id_alumno, $email);
 		}
 	}
 
@@ -414,16 +392,6 @@ class ci_abminscripciones extends gestion_escuela_ci
    		 return;
 		}
 
-		$resumen_mail = $this->get_resumen_envio_mail($id);
-		$cantidad_envios = isset($resumen_mail[0]['cantidad']) ? (int) $resumen_mail[0]['cantidad'] : 0;
-
-		if (isset($this->s__confirmar_mail)) {
-			$this->cambiar_texto_boton_mail('Confirmar envio');
-		} elseif ($cantidad_envios > 0) {
-			$this->cambiar_texto_boton_mail('Reenviar correo (' . $cantidad_envios . ')');
-		} else {
-			$this->cambiar_texto_boton_mail('Enviar correo');
-		}
 	}
 
 
@@ -469,20 +437,20 @@ function procesar_envio($alumno, $mesas){
     }
 
 	if ($cuerpoa) {
-    $cuerpo .= "
-    <div style='color:#2e7d32; font-weight:bold; font-size:15px; margin:12px 0 4px 0;'>
-        Inscripciones Aprobadas
-    </div>";
-    $cuerpo .= "<div style='color:#222222; font-size:14px; line-height:1.4;'>" . $cuerpoa . "</div><br>";
-}
+		$cuerpo .= "
+		<div style='color:#2e7d32; font-weight:bold; font-size:15px; margin:12px 0 4px 0;'>
+			Inscripciones Aprobadas
+		</div>";
+		$cuerpo .= "<div style='color:#222222; font-size:14px; line-height:1.4;'>" . $cuerpoa . "</div><br>";
+	}
 
-if ($cuerpor) {
-    $cuerpo .= "
-    <div style='color:#c62828; font-weight:bold; font-size:15px; margin:12px 0 4px 0;'>
-        Inscripciones Rechazadas
-    </div>";
-    $cuerpo .= "<div style='color:#222222; font-size:14px; line-height:1.4;'>" . $cuerpor . "</div><br>";
-}
+	if ($cuerpor) {
+		$cuerpo .= "
+		<div style='color:#c62828; font-weight:bold; font-size:15px; margin:12px 0 4px 0;'>
+			Inscripciones Rechazadas
+		</div>";
+		$cuerpo .= "<div style='color:#222222; font-size:14px; line-height:1.4;'>" . $cuerpor . "</div><br>";
+	}
 
 	$cuerpo .= "
 	<hr style='border:0; border-top:1px solid #ddd; margin-top:20px;'>
@@ -510,48 +478,26 @@ if ($cuerpor) {
 }
 
 
-	  	// Llamada al WebService
-		/*
-		$client = new SoapClient("http://192.168.0.30/despacharmail/wsdm.asmx?wsdl", array('cache_wsdl' => WSDL_CACHE_NONE,'trace' => TRUE));
-
-		if (!mb_detect_encoding($asunto, 'UTF-8', true)) {
-    		$asunto = mb_convert_encoding($asunto, 'UTF-8', 'ISO-8859-1');
+function evt__formulario__guardar()
+{
+		try{
+			$this->dep('datos')->sincronizar();
+			$this->dep('datos')->resetear();
+		}catch(toba_error_db $e){
+			/* Error al grabar */
+			if($e->get_sqlstate()=="db_23505"){
+				/* Clave Duplicada */
+				$mensaje ="";
+				toba::notificacion()->agregar($mensaje);
+			}else {
+				$mensaje_usuario='ERROR al guardar. Los cambios NO fueron registrados.';
+				$mensaje='<br><br>Información Adicional: ';
+				$mensaje.='<br><strong>Error Nº </strong>'.$e->get_sqlstate();
+				$mensaje.='<br><br><strong> Mensaje: </strong>'.$e->get_mensaje_motor();
+				throw new toba_error($mensaje_usuario,$mensaje);
+				//toba::notificacion()->agregar($mensaje);
+			}
 		}
-		if (!mb_detect_encoding($cuerpo, 'UTF-8', true)) {
-    		$cuerpo = mb_convert_encoding($cuerpo, 'UTF-8', 'ISO-8859-1');
-		}
-
-
-		$param = array('asmail' => $para,'asasunto' =>$asunto, 'astexto'=>$cuerpo);
-        $ready = $client->insertarmail($param);
-
-        $objeto= $ready->ExecuteFileTransactionSLResult;
-        $xml = @new SimpleXMLElement($objeto);
-		var_dump($xml);
-		*/
-		
-	//}	
-
-	function evt__formulario__guardar()
-	{
-		 try{
-                $this->dep('datos')->sincronizar();
-				$this->dep('datos')->resetear();
-            }catch(toba_error_db $e){
-                /* Error al grabar */
-                if($e->get_sqlstate()=="db_23505"){
-                    /* Clave Duplicada */
-                    $mensaje ="";
-                    toba::notificacion()->agregar($mensaje);
-                }else {
-                    $mensaje_usuario='ERROR al guardar. Los cambios NO fueron registrados.';
-                    $mensaje='<br><br>Información Adicional: ';
-                    $mensaje.='<br><strong>Error Nº </strong>'.$e->get_sqlstate();
-                    $mensaje.='<br><br><strong> Mensaje: </strong>'.$e->get_mensaje_motor();
-                    throw new toba_error($mensaje_usuario,$mensaje);
-                    //toba::notificacion()->agregar($mensaje);
-                }
-            }
           
 	}
 
