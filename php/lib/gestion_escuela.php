@@ -160,19 +160,17 @@
 	
 		function get_profesoresconsulta($where='1=1')
 		{
-			$sql = "SELECT
+			$sql = "select
 						pro.id AS id_inscripcion,
 						pro.apellido || ', ' || pro.nombre AS nombre_completo,
 						pro.email,
 						ca.descripcion AS desccarrera,
 						ma.nombre AS descmateria
-					FROM profesores pro
-					INNER JOIN materias ma
-						ON ma.id_profesor = pro.id
-					INNER JOIN carrera ca
-						ON ca.id = ma.id_carrera
-					WHERE $where
-					ORDER BY
+					from profesores pro
+					join materias ma on ma.id_profesor = pro.id
+ 					join carrera ca on ca.id = ma.id_carrera
+					where $where
+					order by
 						pro.apellido,
 						pro.nombre,
 						ma.nombre";
@@ -183,7 +181,7 @@
 		{
 			$id_profesor = (int)$id_profesor;
 
-			$sql = "SELECT
+			$sql = "selecy
 						pro.id AS id_profesor,
 						pro.apellido || ', ' || pro.nombre AS nombre_completo,
 						pro.email,
@@ -200,33 +198,19 @@
 						alu.dni,
 						alu.email AS email_alumno
 
-					FROM profesores pro
-
-					INNER JOIN materias ma
-						ON ma.id_profesor = pro.id
-
-					INNER JOIN carrera ca
-						ON ca.id = ma.id_carrera
-
-					INNER JOIN inscripciones insc
-						ON insc.id_materia = ma.id
-
-					INNER JOIN alumnos alu
-						ON alu.id = insc.id_alumno
-
-					WHERE pro.id = $id_profesor
-
-					ORDER BY
+					from profesores pro
+					join materias ma on ma.id_profesor = pro.id
+					join carrera ca on ca.id = ma.id_carrera
+ 					join inscripciones insc on insc.id_materia = ma.id
+					join alumnos alu on alu.id = insc.id_alumno
+					wherew pro.id = $id_profesor
+					order by
 						ma.nombre,
 						alu.apellido,
 						alu.nombre";
 
 			return toba::db()->consultar($sql);
 		}
-
-
-
-
 
 }
 
