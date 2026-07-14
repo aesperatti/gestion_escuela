@@ -84,11 +84,14 @@ INSERT INTO apex_objeto_dependencias (proyecto, dep_id, objeto_consumidor, objet
 	NULL, --inicializar
 	NULL  --orden
 );
+--- FIN Grupo de desarrollo 91
+
+--- INICIO Grupo de desarrollo 4
 INSERT INTO apex_objeto_dependencias (proyecto, dep_id, objeto_consumidor, objeto_proveedor, identificador, parametros_a, parametros_b, parametros_c, inicializar, orden) VALUES (
 	'gestion_escuela', --proyecto
-	'91000053', --dep_id
+	'4000041', --dep_id
 	'91000058', --objeto_consumidor
-	'91000059', --objeto_proveedor
+	'4000089', --objeto_proveedor
 	'filtro', --identificador
 	NULL, --parametros_a
 	NULL, --parametros_b
@@ -96,7 +99,7 @@ INSERT INTO apex_objeto_dependencias (proyecto, dep_id, objeto_consumidor, objet
 	NULL, --inicializar
 	NULL  --orden
 );
---- FIN Grupo de desarrollo 91
+--- FIN Grupo de desarrollo 4
 
 ------------------------------------------------------------
 -- apex_objeto_ci_pantalla
@@ -108,11 +111,11 @@ INSERT INTO apex_objeto_ci_pantalla (objeto_ci_proyecto, objeto_ci, pantalla, id
 	'91000058', --objeto_ci
 	'91000020', --pantalla
 	'pant_inicial', --identificador
-	NULL, --orden
+	'1', --orden
 	'Pantalla Inicial', --etiqueta
 	NULL, --descripcion
 	NULL, --tip
-	NULL, --imagen_recurso_origen
+	'apex', --imagen_recurso_origen
 	NULL, --imagen
 	NULL, --objetos
 	NULL, --eventos
@@ -120,7 +123,7 @@ INSERT INTO apex_objeto_ci_pantalla (objeto_ci_proyecto, objeto_ci, pantalla, id
 	NULL, --subclase_archivo
 	NULL, --template
 	NULL, --template_impresion
-	NULL  --punto_montaje
+	'4000002'  --punto_montaje
 );
 --- FIN Grupo de desarrollo 91
 
@@ -132,7 +135,7 @@ INSERT INTO apex_objetos_pantalla (proyecto, pantalla, objeto_ci, orden, dep_id)
 	'91000020', --pantalla
 	'91000058', --objeto_ci
 	'0', --orden
-	'91000053'  --dep_id
+	'4000041'  --dep_id
 );
 INSERT INTO apex_objetos_pantalla (proyecto, pantalla, objeto_ci, orden, dep_id) VALUES (
 	'gestion_escuela', --proyecto

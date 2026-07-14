@@ -128,7 +128,7 @@
 		{
 			$sql="select insc.id_inscripcion, ma.nombre as desc_materia, insc.fecha_inscripcion, ei.id as id_estado, 
 			ci.descripcion as desc_condicion, ei.descripcion as desc_estado, ca.descripcion as desccarrera,
-			fecha_notificado,
+			
 			CASE
 				WHEN insc.motivo IS NOT NULL AND LENGTH(insc.motivo) > 50 THEN LEFT(insc.motivo, 50) || '...'
 				ELSE insc.motivo
@@ -157,7 +157,77 @@
 			return toba::db()->consultar($sql);
 		}
 		
-		
-    }
+	
+		function get_profesoresconsulta($where='1=1')
+		{
+			$sql = "SELECT
+						pro.id AS id_inscripcion,
+						pro.apellido || ', ' || pro.nombre AS nombre_completo,
+						pro.email,
+						ca.descripcion AS desccarrera,
+						ma.nombre AS descmateria
+					FROM profesores pro
+					INNER JOIN materias ma
+						ON ma.id_profesor = pro.id
+					INNER JOIN carrera ca
+						ON ca.id = ma.id_carrera
+					WHERE $where
+					ORDER BY
+						pro.apellido,
+						pro.nombre,
+						ma.nombre";
+
+			return toba::db()->consultar($sql);
+		}
+		function get_alumnos_profesor($id_profesor)
+		{
+			$id_profesor = (int)$id_profesor;
+
+			$sql = "SELECT
+						pro.id AS id_profesor,
+						pro.apellido || ', ' || pro.nombre AS nombre_completo,
+						pro.email,
+
+						ma.id AS id_materia,
+						ma.nombre AS descmateria,
+
+						ca.descripcion AS desccarrera,
+
+						alu.id,
+						alu.legajo,
+						alu.apellido,
+						alu.nombre,
+						alu.dni,
+						alu.email AS email_alumno
+
+					FROM profesores pro
+
+					INNER JOIN materias ma
+						ON ma.id_profesor = pro.id
+
+					INNER JOIN carrera ca
+						ON ca.id = ma.id_carrera
+
+					INNER JOIN inscripciones insc
+						ON insc.id_materia = ma.id
+
+					INNER JOIN alumnos alu
+						ON alu.id = insc.id_alumno
+
+					WHERE pro.id = $id_profesor
+
+					ORDER BY
+						ma.nombre,
+						alu.apellido,
+						alu.nombre";
+
+			return toba::db()->consultar($sql);
+		}
+
+
+
+
+
+}
 
 	
