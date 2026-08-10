@@ -214,6 +214,7 @@
 		
 	
 		function get_profesoresconsulta($where='1=1')
+<<<<<<< HEAD
         {
             $sql = "select
                         pro.id AS id_profesor,
@@ -229,6 +230,23 @@
                         pro.apellido,
                         pro.nombre,
                         ma.nombre";
+=======
+		{
+			$sql = "select
+						pro.id AS id_inscripcion,
+						pro.apellido || ', ' || pro.nombre AS nombre_completo,
+						pro.email,
+						ca.descripcion AS desccarrera,
+						ma.nombre AS descmateria
+					from profesores pro
+					join materias ma on ma.id_profesor = pro.id
+ 					join carrera ca on ca.id = ma.id_carrera
+					where $where
+					order by
+						pro.apellido,
+						pro.nombre,
+						ma.nombre";
+>>>>>>> 764de8582ee8475df08d6492fd66db2c8d594f1d
 
             return toba::db()->consultar($sql);
         }
@@ -236,11 +254,18 @@
         {
             $id_profesor = (int)$id_profesor;
 
+<<<<<<< HEAD
             // ACA SE CORRIGIO EL 'selecy' Y EL 'wherew'
             $sql = "select
                         pro.id AS id_profesor,
                         pro.apellido || ', ' || pro.nombre AS nombre_completo,
                         pro.email,
+=======
+			$sql = "selecy
+						pro.id AS id_profesor,
+						pro.apellido || ', ' || pro.nombre AS nombre_completo,
+						pro.email,
+>>>>>>> 764de8582ee8475df08d6492fd66db2c8d594f1d
 
                         ma.id AS id_materia,
                         ma.nombre AS descmateria,
@@ -254,6 +279,7 @@
                         alu.dni,
                         alu.email AS email_alumno
 
+<<<<<<< HEAD
                     from profesores pro
                     join materias ma on ma.id_profesor = pro.id
                     join carrera ca on ca.id = ma.id_carrera
@@ -312,11 +338,24 @@
 	function notprof_get_mesas_confirmadas($where = '1=1')
 	{
 		$where = trim((string) $where);
+=======
+					from profesores pro
+					join materias ma on ma.id_profesor = pro.id
+					join carrera ca on ca.id = ma.id_carrera
+ 					join inscripciones insc on insc.id_materia = ma.id
+					join alumnos alu on alu.id = insc.id_alumno
+					wherew pro.id = $id_profesor
+					order by
+						ma.nombre,
+						alu.apellido,
+						alu.nombre";
+>>>>>>> 764de8582ee8475df08d6492fd66db2c8d594f1d
 
 		if ($where === '') {
 			$where = '1=1';
 		}
 
+<<<<<<< HEAD
 		$sql = "
 			SELECT
 				me.id AS id_mesa,
@@ -406,6 +445,8 @@
 		return toba::db('gestion_escuela')->consultar($sql);
 	}
 
+=======
+>>>>>>> 764de8582ee8475df08d6492fd66db2c8d594f1d
 }
 
 	
