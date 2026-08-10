@@ -159,74 +159,201 @@
 		
 	
 		function get_profesoresconsulta($where='1=1')
-		{
-			$sql = "SELECT
-						pro.id AS id_inscripcion,
-						pro.apellido || ', ' || pro.nombre AS nombre_completo,
-						pro.email,
-						ca.descripcion AS desccarrera,
-						ma.nombre AS descmateria
-					FROM profesores pro
-					INNER JOIN materias ma
-						ON ma.id_profesor = pro.id
-					INNER JOIN carrera ca
-						ON ca.id = ma.id_carrera
-					WHERE $where
-					ORDER BY
-						pro.apellido,
-						pro.nombre,
-						ma.nombre";
+        {
+            // ACA ESTA EL CAMBIO CLAVE: pro.id AS id_profesor
+            $sql = "select
+                        pro.id AS id_profesor,
+                        pro.apellido || ', ' || pro.nombre AS nombre_completo,
+                        pro.email,
+                        ca.descripcion AS desccarrera,
+                        ma.nombre AS descmateria
+                    from profesores pro
+                    join materias ma on ma.id_profesor = pro.id
+                    join carrera ca on ca.id = ma.id_carrera
+                    where $where
+                    order by
+                        pro.apellido,
+                        pro.nombre,
+                        ma.nombre";
 
-			return toba::db()->consultar($sql);
-		}
+            return toba::db()->consultar($sql);
+        }
 		function get_alumnos_profesor($id_profesor)
-		{
-			$id_profesor = (int)$id_profesor;
+        {
+            $id_profesor = (int)$id_profesor;
 
-			$sql = "SELECT
-						pro.id AS id_profesor,
-						pro.apellido || ', ' || pro.nombre AS nombre_completo,
-						pro.email,
+            // ACA SE CORRIGIO EL 'selecy' Y EL 'wherew'
+            $sql = "select
+                        pro.id AS id_profesor,
+                        pro.apellido || ', ' || pro.nombre AS nombre_completo,
+                        pro.email,
 
-						ma.id AS id_materia,
-						ma.nombre AS descmateria,
+                        ma.id AS id_materia,
+                        ma.nombre AS descmateria,
 
-						ca.descripcion AS desccarrera,
+                        ca.descripcion AS desccarrera,
 
-						alu.id,
-						alu.legajo,
-						alu.apellido,
-						alu.nombre,
-						alu.dni,
-						alu.email AS email_alumno
+                        alu.id,
+                        alu.legajo,
+                        alu.apellido,
+                        alu.nombre,
+                        alu.dni,
+                        alu.email AS email_alumno
 
-					FROM profesores pro
+                    from profesores pro
+                    join materias ma on ma.id_profesor = pro.id
+                    join carrera ca on ca.id = ma.id_carrera
+                    join inscripciones insc on insc.id_materia = ma.id
+                    join alumnos alu on alu.id = insc.id_alumno
+                    where pro.id = $id_profesor
+                    order by
+                        ma.nombre,
+                        alu.apellido,
+                        alu.nombre";
 
-					INNER JOIN materias ma
-						ON ma.id_profesor = pro.id
+            return toba::db()->consultar($sql);
+        }
 
-					INNER JOIN carrera ca
-						ON ca.id = ma.id_carrera
+	//seccion funciones para NOTIFICACION DE PROFESORES
 
-					INNER JOIN inscripciones insc
-						ON insc.id_materia = ma.id
+	function notprof_get_carreras(){
+		$sql = "
+			SELECT id, descripcion
+			FROM carrera
+			ORDER BY descripcion
+		";
+		return toba::db('gestion_escuela')->consultar($sql);	
+	}
 
-					INNER JOIN alumnos alu
-						ON alu.id = insc.id_alumno
+	function notprof_get_profesores(){
+		$sql = "
+			SELECT id, apellido || ', ' || nombre AS nombre_completo
+			FROM profesores 					
+			ORDER BY apellido,nombre
+		";
+		return toba::db('gestion_escuela')->consultar($sql);
+	}
+	
+	function notprof_get_materias(){
+		$sql = "
+			SELECT id, nombre as descripcion
+			FROM materias
+			ORDER BY nombre
+		";
+		return toba::db('gestion_escuela')->consultar($sql);
+	}
 
-					WHERE pro.id = $id_profesor
+	function notprof_get_resultados($Where = '1=1'){
+		$sql = "
+			SELECT pro.id as id_profesor, ma.id as id_materia, ca.id as id_carrera, pro.apellido || ', ' || pro.nombre AS nombre_completo,
+					pro.email, ca.descripcion as desccarrera, ma.nombre as descmateria
+			FROM materias as ma
+			JOIN profesores pro ON pro.id = ma.id_profesor
+			JOIN carrera ca ON ca.id = ma.id_carrera
+			WHERE $Where
+			ORDER BY ca.descripcion, ma.nombre, pro.apellido, pro.nombre
+		";
+		return toba::db('gestion_escuela')->consultar($sql);
+	}
 
-					ORDER BY
-						ma.nombre,
-						alu.apellido,
-						alu.nombre";
+	function notprof_get_mesas_confirmadas($where = '1=1')
+	{
+		$where = trim((string) $where);
 
-			return toba::db()->consultar($sql);
+		if ($where === '') {
+			$where = '1=1';
 		}
 
+		$sql = "
+			SELECT
+				me.id AS id_mesa,
 
+				ca.id AS id_carrera,
+				ca.descripcion AS desccarrera,
 
+				ma.id AS id_materia,
+				ma.nombre AS descmateria,
 
+				me.fecha AS fecha_mesa_orden,
+				TO_CHAR(me.fecha, 'DD/MM/YYYY') AS fecha_mesa,
+
+				pro.id AS id_profesor,
+				pro.apellido || ', ' || pro.nombre AS nombre_completo,
+				pro.email AS email_profesor,
+
+				COUNT(DISTINCT insc.id_inscripcion) AS cantidad_alumnos
+
+			FROM mesas_examen me
+
+			JOIN materias ma
+				ON ma.id = me.id_materia
+
+			JOIN carrera ca
+				ON ca.id = ma.id_carrera
+
+			JOIN profesores pro
+				ON pro.id = ma.id_profesor
+
+			LEFT JOIN inscripciones insc
+				ON insc.id_mesa = me.id
+			AND insc.id_estado = 2
+
+			WHERE me.id_materia IS NOT NULL
+			AND me.fecha IS NOT NULL
+			AND ($where)
+
+			GROUP BY
+				me.id,
+				ca.id,
+				ca.descripcion,
+				ma.id,
+				ma.nombre,
+				me.fecha,
+				pro.id,
+				pro.apellido,
+				pro.nombre,
+				pro.email
+
+			ORDER BY
+				ca.descripcion,
+				me.fecha,
+				ma.nombre,
+				pro.apellido,
+				pro.nombre
+		";
+
+		return toba::db('gestion_escuela')->consultar($sql);
+	}
+	function notprof_get_alumnos_mesa($id_mesa)
+	{
+		$id_mesa = (int) $id_mesa;
+
+		$sql = "
+			SELECT
+				insc.id_inscripcion,
+				alu.id AS id_alumno,
+				alu.legajo,
+				alu.apellido || ', ' || alu.nombre AS alumno,
+				alu.dni,
+				alu.email AS email_alumno
+
+			FROM inscripciones insc
+
+			JOIN alumnos alu
+				ON alu.id = insc.id_alumno
+
+			WHERE insc.id_mesa = $id_mesa
+			AND insc.id_estado = 2
+
+			ORDER BY
+				alu.apellido,
+				alu.nombre
+		";
+
+		return toba::db('gestion_escuela')->consultar($sql);
+	}
+
+	//AQUI TERMINAMOS SECCION NOTIFICACION DE PROFESORES
 
 }
 
